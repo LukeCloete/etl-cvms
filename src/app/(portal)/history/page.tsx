@@ -170,16 +170,18 @@ export default function page() {
                 <TableBody>
                   <TableRow className="flex justify-between border-2  border-solid p-2 mb-2 rounded-lg ">
                     <TableCell className="font-medium ">
-                      <div className="flex">
-                        <CardSim className="bg-econetBlue text-econetWhite rounded-full" />
+                      <div className="flex space-x-4 ">
+                        <div className="bg-econetBlue p-2 rounded-xl border border-white/10">
+                          <CardSim className="text-white size-6" />
+                        </div>
                         <div>
                           <p className="font-bold">80 MB DAILY BUNDLE</p>
                           <p className="ml-auto">Redeemed at 08:32 24/08/25</p>
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell className="bg-econetBlue text-econetWhite ml-auto flex rounded-full justify-center items-center">
-                      +25 E-Bucks
+                    <TableCell className="bg-econetBlue  text-econetWhite ml-auto flex rounded-full justify-center items-center">
+                      <p>+25 E-Bucks</p>
                     </TableCell>
                   </TableRow>
                 </TableBody>
