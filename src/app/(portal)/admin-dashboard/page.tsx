@@ -17,81 +17,74 @@ export default function page() {
             <p>Home </p>
           </div>
           <p className="mb-8 text-econetBlue text-3xl font-bold">
-            Welcome Dennis
+            Admin Dashboard
           </p>
 
-          <Card className=" bg-econetBlue text-econetWhite mb-4">
-            <CardHeader>
-              <CardTitle>Your E-Bucks Balance</CardTitle>
-              <CardDescription className="text-econetWhite">
-                Earn more with every Econet service
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="">
-              <p className="text-4xl font-bold">5 000</p>
-
-              <p> Earn 1 000 more E-Bucks to reach the next tier</p>
-            </CardContent>
-            <CardFooter>
-              <p>THE LONG BAR</p>
-            </CardFooter>
-          </Card>
-          {/* CARDS */}
+          {/* First row of CARDS */}
           <div className="flex justify-center gap-4 mb-8">
             <DashboardCard
-              title={"Total Daily Data"}
+              title={"Total Daily Data of All Agents"}
               date={"date"}
               value={"100 MB"}
             ></DashboardCard>
 
             <DashboardCard
-              title={"Total Daily SMS"}
+              title={"Total Daily SMS of All Agents"}
               date={"date"}
               value={"10 SMS"}
             ></DashboardCard>
 
             <DashboardCard
-              title={"Total Daily Voice"}
+              title={"Total Daily Voice of All Agents"}
               date={"date"}
               value={"20 Mins"}
             ></DashboardCard>
 
             <DashboardCard
-              title={"Weekly Cash-In"}
+              title={"Weekly Cash-In of All Agents"}
               date={"date"}
               value={"200 LSL"}
             ></DashboardCard>
 
             <DashboardCard
-              title={"Weekly Cash-Out"}
+              title={"Weekly Cash-Out of All Agents"}
               date={"date"}
               value={"100 LSL"}
             ></DashboardCard>
           </div>
 
-          <Card className="mb-8">
-            <CardHeader>
-              <CardTitle className="flex">Quick Actions</CardTitle>
-              <CardDescription>
-                Access your favourite features instantly
-              </CardDescription>
-            </CardHeader>
-            {/* I made the height 32, not sure if i should do that */}
-            <CardContent className=" flex h-32 mt-4 space-x-8">
-              <div className="bg-econetBlue text-econetWhite w-1/2 flex justify-center items-center align-items rounded-xl ">
-                <p className="flex flex-col justify-center items-center ">
-                  <CardSim />
-                  Redeem Bundles
-                </p>
-              </div>
-              <div className="w-1/2 flex justify-center items-center rounded-xl border-2 border-solid">
-                <p className="flex flex-col justify-center items-center ">
-                  <Gift />
-                  Item Shop
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+          {/* Second row of CARDS */}
+          <div className="flex justify-center gap-4 mb-8">
+            <DashboardCard
+              title={"Total E-Bucks "}
+              date={"date"}
+              value={"100 MB"}
+            ></DashboardCard>
+
+            <DashboardCard
+              title={"Weekly Transactions "}
+              date={"date"}
+              value={"10 SMS"}
+            ></DashboardCard>
+
+            <DashboardCard
+              title={"Weekly Value"}
+              date={"date"}
+              value={"20 Mins"}
+            ></DashboardCard>
+
+            <DashboardCard
+              title={"Transaction Growth"}
+              date={"date"}
+              value={"200 LSL"}
+            ></DashboardCard>
+
+            <DashboardCard
+              title={"Average Value per Transaction"}
+              date={"date"}
+              value={"100 LSL"}
+            ></DashboardCard>
+          </div>
 
           <Card>
             <CardHeader>
