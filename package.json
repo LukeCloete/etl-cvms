@@ -10,10 +10,13 @@
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.3",
+    "appwrite": "^18.1.1",
+    "axios": "^1.11.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.542.0",
     "next": "14.2.32",
+    "node-appwrite": "^18.0.0",
     "react": "^18",
     "react-dom": "^18",
     "tailwind-merge": "^3.3.1",
