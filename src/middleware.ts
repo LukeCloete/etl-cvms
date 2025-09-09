@@ -5,7 +5,7 @@ export async function middleware(request: NextRequest) {
   const user = await auth.getUser();
   if (!user) {
     request.cookies.delete("session");
-    const response = NextResponse.redirect(new URL("/login", request.url));
+    const response = NextResponse.redirect(new URL("/log-in", request.url));
     return response;
   }
   console.log("middleware ran");

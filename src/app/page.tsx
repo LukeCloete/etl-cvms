@@ -1,18 +1,81 @@
-"use client";
-// import { auth } from "@/lib/firebase";
-import { redirect } from "next/navigation";
-// import { useAuthState } from "react-firebase-hooks/auth";
+import axiosInstance from "@/lib/axiosInstance";
 
-export default function Home() {
-  // const [user] = useAuthState(auth);
-  // if (!user) {
-  //   redirect("/login");
-  // }
+interface Msisdn {
+  $id: string;
+  msisdn: number;
+}
+
+interface Agent {
+  $id: string;
+  name: string;
+  current_points: number;
+  current_ebucks: number;
+  msisdns: Msisdn[];
+}
+
+export default async function Home() {
+  const response = await axiosInstance({
+    url: "http://localhost:3000/api/agent/me",
+    method: "get",
+  });
+  const agent: Agent = response.data.agent;
+  console.log(agent);
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <a href="/login" className="text-primary underline">
-        Go to Login
-      </a>
-    </div>
+    <main className="container mx-auto max-w-[800px]">
+      <div className="flex flex-col">
+        <strong>Agents</strong>
+        <p>Your team's weekly performance.</p>
+
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+              >
+                Agent
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+              >
+                Ebucks
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+              >
+                Points
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+              >
+                Msisdns
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-200 bg-white">
+            <tr key={agent.$id}>
+              <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
+                {agent.name}
+              </td>
+              <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                {agent.current_ebucks}
+              </td>
+              <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                {agent.current_points}
+              </td>
+              <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                {agent.msisdns?.map((msisdn: any, index: number) => (
+                  <p key={index}>{msisdn.msisdn}</p>
+                ))}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
   );
 }
