@@ -12,20 +12,23 @@ export default function page() {
   return (
     <div>
       <div className="flex p-8">
-        <div className="w-2/3 mr-12 ml-4">
+        <div className="w-3/4 mr-12 ml-4">
           <div className="text-econetBlue mb-4">
             <p>Home &gt; Profile</p>
           </div>
           <p className="text-econetBlue text-3xl font-bold">My Profile</p>
           <p className="mt-4 mb-8">Manage your account information</p>
 
-          <Card>
+          {/* Personal Information */}
+          <Card className="mb-8">
             <CardHeader>
-              <CardTitle className="flex">
-                <User />
-                Personal Information
+              <CardTitle className="flex space-x-2">
+                <div>
+                  <User />
+                </div>
+                <div>Personal Information</div>
               </CardTitle>
-              <CardDescription className="pl-2">
+              <CardDescription className="pl-1">
                 Update your personal details and contact information
               </CardDescription>
             </CardHeader>
@@ -61,20 +64,23 @@ export default function page() {
               </div>
             </CardContent>
           </Card>
+
           {/* Account security */}
-          <Card>
+          <Card className="mb-8">
             <CardHeader>
-              <CardTitle className="flex">
-                <Shield />
-                Account Security
+              <CardTitle className="flex space-x-2">
+                <div>
+                  <Shield />
+                </div>
+                <div>Account Security</div>
               </CardTitle>
-              <CardDescription className="pl-2">
+              <CardDescription className="pl-1">
                 Manage your account security settings
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex flex-col p-2 ">
-                <div>
+                <div className="mb-4">
                   <p className="font-bold">Password</p>
                   <p>Last updated 2 months ago</p>
                 </div>
@@ -85,28 +91,31 @@ export default function page() {
               </div>
             </CardContent>
           </Card>
+
           {/* Notifications preferences */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex">
-                <Bell />
-                Notification Preferences
+              <CardTitle className="flex space-x-2">
+                <div>
+                  <Bell />
+                </div>
+                <div>Notification Preferences</div>
               </CardTitle>
-              <CardDescription className="pl-2">
+              <CardDescription className="pl-1">
                 Choose how you want to receive notifications
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-4">
               <div className="flex flex-col p-2 ">
-                <div>
+                <div className="mb-4">
                   <p className="font-bold">E-Bucks Earned</p>
                   <p>Get notified when you earn E-Bucks</p>
                 </div>
-                <div>
+                <div className="mb-4">
                   <p className="font-bold">Reward Redemptions</p>
                   <p>Confirmation of successful redemptions</p>
                 </div>
-                <div>
+                <div className="mb-4">
                   <p className="font-bold">Promotion Offers</p>
                   <p>Special deals and additional E-Buck opportunities</p>
                 </div>
@@ -116,10 +125,10 @@ export default function page() {
         </div>
 
         {/* Profile card */}
-        <div className="w-1/3 flex flex-col gap-4 mr-4">
+        <div className="w-1/4 flex flex-col gap-4 mr-4">
           <Card className="bg-econetBlue text-econetWhite p-4 rounded-lg flex flex-col justify-center items-center">
             <CardHeader>
-              <CardTitle className="flex ">
+              <CardTitle className="flex flex-col items-center justify-center gap-2">
                 <User />
                 Dennis Plaatjies
               </CardTitle>
@@ -129,13 +138,21 @@ export default function page() {
                 <p>GOLD</p>
               </div>
             </CardContent>
-            <CardContent className=" flex">
-              <Phone />
-              <p>+266 123 4567</p>
+            <CardContent className="flex space-x-2">
+              <div>
+                <Phone />
+              </div>
+              <div>
+                <p>+266 123 4567</p>
+              </div>
             </CardContent>
-            <CardContent className=" flex">
-              <Calendar />
-              <p>Memeber since January 2025</p>
+            <CardContent className=" flex space-x-2">
+              <div>
+                <Calendar />
+              </div>
+              <div>
+                <p>Memeber since January 2025</p>
+              </div>
             </CardContent>
           </Card>
         </div>
