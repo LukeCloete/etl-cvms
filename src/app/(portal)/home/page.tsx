@@ -8,6 +8,8 @@ import {
 } from "@/components/ui/card";
 import DashboardCard from "@/components/DashboardCard";
 import { History, Gift, CardSim, Lightbulb } from "lucide-react";
+
+
 import axiosInstance from "@/lib/axiosInstance";
 import { Agent } from "@/lib/definitions";
 import { redirect } from "next/navigation";
@@ -60,6 +62,7 @@ export default async function page({ searchParams }: HomeProps) {
   ]);
 
   const agentData = { coreSpend, performance };
+
 
   return (
     <div>

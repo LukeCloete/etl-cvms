@@ -7,8 +7,11 @@ export default async function Layout({
 }) {
   return (
     <html lang="en">
+
+
       <NavbarWrapper />
       <body>{children}</body>
+
     </html>
   );
 }
