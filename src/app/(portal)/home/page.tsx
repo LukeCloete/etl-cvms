@@ -8,10 +8,61 @@ import {
 } from "@/components/ui/card";
 import DashboardCard from "@/components/DashboardCard";
 import { History, Gift, CardSim, Lightbulb } from "lucide-react";
-import { getData } from "./_lib/data";
-// import getData from "../../";
-export default function page() {
-  getData();
+
+
+import axiosInstance from "@/lib/axiosInstance";
+import { Agent } from "@/lib/definitions";
+import { redirect } from "next/navigation";
+import Cards from "./_components/Cards";
+import { cookies } from "next/headers";
+
+interface HomeProps {
+  searchParams: {
+    msisdn?: string;
+  };
+}
+
+async function getCoreSpendData(msisdn: string) {
+  const res = await fetch(
+    `http://localhost:3000/api/core_spend?msisdn=${msisdn}`,
+    {
+      method: "get",
+      headers: {
+        Cookie: cookies().toString(),
+      },
+    }
+  );
+  return res.json();
+}
+
+async function getPerformanceData(msisdn: string) {
+  const res = await fetch(
+    `http://localhost:3000/api/performance?msisdn=${msisdn}`,
+    {
+      method: "get",
+      headers: {
+        Cookie: cookies().toString(),
+      },
+    }
+  );
+  return res.json();
+}
+
+export default async function page({ searchParams }: HomeProps) {
+  const agentName = "Agent";
+
+  const msisdn = searchParams.msisdn!;
+
+  const coreSpendData: any = await getCoreSpendData(msisdn);
+  const performanceData: any = await getPerformanceData(msisdn);
+
+  const [coreSpend, performance] = await Promise.all([
+    coreSpendData,
+    performanceData,
+  ]);
+
+  const agentData = { coreSpend, performance };
+
 
   return (
     <div>
@@ -21,7 +72,7 @@ export default function page() {
             <p>Home </p>
           </div>
           <p className="mb-8 text-econetBlue text-3xl font-bold">
-            Welcome Dennis
+            Welcome {agentName}
           </p>
 
           <Card className=" bg-econetBlue text-econetWhite mb-4">
@@ -32,46 +83,17 @@ export default function page() {
               </CardDescription>
             </CardHeader>
             <CardContent className="">
-              <p className="text-4xl font-bold">5 000</p>
-
-              <p> Earn 1 000 more E-Bucks to reach the next tier</p>
+              <p className="text-4xl font-bold">
+                {coreSpendData?.WEEKLY_VALUE || "N/A"}
+              </p>
+              <p> Earn more E-Bucks to reach the next tier</p>
             </CardContent>
             <CardFooter>
               <p>THE LONG BAR</p>
             </CardFooter>
           </Card>
-          {/* CARDS */}
-          <div className="flex justify-center gap-4 mb-8">
-            <DashboardCard
-              title={"Total Daily Data"}
-              date={"date"}
-              value={"100 MB"}
-            ></DashboardCard>
 
-            <DashboardCard
-              title={"Total Daily SMS"}
-              date={"date"}
-              value={"10 SMS"}
-            ></DashboardCard>
-
-            <DashboardCard
-              title={"Total Daily Voice"}
-              date={"date"}
-              value={"20 Mins"}
-            ></DashboardCard>
-
-            <DashboardCard
-              title={"Weekly Cash-In"}
-              date={"date"}
-              value={"200 LSL"}
-            ></DashboardCard>
-
-            <DashboardCard
-              title={"Weekly Cash-Out"}
-              date={"date"}
-              value={"100 LSL"}
-            ></DashboardCard>
-          </div>
+          <Cards data={agentData} />
 
           <Card className="mb-8">
             <CardHeader>
@@ -80,7 +102,6 @@ export default function page() {
                 Access your favourite features instantly
               </CardDescription>
             </CardHeader>
-            {/* I made the height 32, not sure if i should do that */}
             <CardContent className=" flex h-32 mt-4 space-x-8">
               <div className="bg-econetBlue text-econetWhite w-1/2 flex justify-center items-center align-items rounded-xl ">
                 <p className="flex flex-col justify-center items-center ">
@@ -105,7 +126,6 @@ export default function page() {
               </CardDescription>
             </CardHeader>
             <CardContent className="flex">
-              {/* Below are the reward cards */}
               <Card className=" flex flex-col justify-center items-center">
                 <CardHeader>
                   <CardTitle>
@@ -155,7 +175,6 @@ export default function page() {
             </CardContent>
           </Card>
 
-          {/* Earning tips card  */}
           <Card>
             <CardHeader>
               <CardTitle className="flex space-x-2 text-green-600">

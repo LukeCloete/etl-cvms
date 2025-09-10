@@ -1,8 +1,9 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 import { cookies } from "next/headers";
 import { createSessionClient } from "@/appwrite/config";
 import { Query } from "node-appwrite";
+import { getUser } from "@/lib/actions";
 
 export async function GET(req: NextRequest) {
   const sessionCookie = cookies().get("session");
@@ -24,7 +25,6 @@ export async function GET(req: NextRequest) {
       ],
     });
 
-    // Check if an agent was found
     if (agentRow.length === 0) {
       return Response.json({ error: "Agent not found" }, { status: 404 });
     }
@@ -40,13 +40,26 @@ export async function GET(req: NextRequest) {
       ],
     });
 
-    // Step 4: Combine the data and return a single JSON object
-    const agentWithMsisdns = {
+    // Fetch core spend data for the active MSISDN
+    // const { rows: coreSpendRows } = await tablesDB.listRows({
+    //   databaseId: process.env.APPWRITE_DATABASE_ID!,
+    //   tableId: "core_spend", // Replace with your actual table ID
+    //   queries: [Query.equal("msisdn", activeMsisdn.msisdn)],
+    // });
+
+    // Fetch performance rankings data for the active MSISDN
+    // const { rows: performanceRankingsRows } = await tablesDB.listRows({
+    //   databaseId: process.env.APPWRITE_DATABASE_ID!,
+    //   tableId: "performance_rankings", // Replace with your actual table ID
+    //   queries: [Query.equal("msisdn", activeMsisdn.msisdn)],
+    // });
+
+    const agentWithData = {
       ...agent,
       msisdns,
     };
 
-    return Response.json({ agent: agentWithMsisdns });
+    return NextResponse.json({ agent: agentWithData });
   } catch (error) {
     console.error("Error fetching agent data:", error);
     return Response.json("Unauthorized Request", { status: 403 });

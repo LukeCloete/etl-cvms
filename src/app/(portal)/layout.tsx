@@ -1,12 +1,17 @@
-import Navbar from "@/components/Navbar";
+import NavbarWrapper from "@/components/NavbarWrapper";
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default async function Layout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
-      <div className="flex flex-col items-center justify-center">
-        {/* <Navbar /> */}
-        <body>{children}</body>
-      </div>
+
+
+      <NavbarWrapper />
+      <body>{children}</body>
+
     </html>
   );
 }

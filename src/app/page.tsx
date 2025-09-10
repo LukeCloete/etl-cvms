@@ -1,17 +1,5 @@
 import axiosInstance from "@/lib/axiosInstance";
-
-interface Msisdn {
-  $id: string;
-  msisdn: number;
-}
-
-interface Agent {
-  $id: string;
-  name: string;
-  current_points: number;
-  current_ebucks: number;
-  msisdns: Msisdn[];
-}
+import { Agent } from "@/lib/definitions";
 
 export default async function Home() {
   const response = await axiosInstance({
@@ -19,7 +7,6 @@ export default async function Home() {
     method: "get",
   });
   const agent: Agent = response.data.agent;
-  console.log(agent);
 
   return (
     <main className="container mx-auto max-w-[800px]">
