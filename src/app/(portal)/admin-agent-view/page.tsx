@@ -8,13 +8,22 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Bell, Shield, Calendar, Phone, User } from "lucide-react";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHeader,
+  TableHead,
+  TableRow,
+} from "@/components/ui/table";
+import { History, Gift, CardSim, PhoneCall, Lightbulb } from "lucide-react";
 
 export default function page() {
   return (
     <div>
-      <div className="flex p-8">
-        <div className="w-3/4 mr-12 ml-4">
+      <div className="flex p-8 ">
+        <div className="w-3/4 mr-12 ml-4 ">
           <div className="text-econetBlue mb-4">
             <p>Dashboard &gt; Agents &gt; AgentName</p>
           </div>
@@ -22,7 +31,7 @@ export default function page() {
           <p className="mt-4 mb-8">View key information for "AgentName"</p>
 
           {/* CARDS */}
-          <div className="flex justify-center gap-4 mb-8">
+          <div className="flex justify-center gap-4 mb-8 ">
             <DashboardCard
               title={"Total Daily Data"}
               date={"date"}
@@ -55,29 +64,75 @@ export default function page() {
           </div>
 
           {/* Recent Transactions */}
-          <Card className="mb-8">
+          <Card>
             <CardHeader>
-              <CardTitle className="flex space-x-2">
-                <div>
-                  <Shield />
-                </div>
-                <div>Recent Transactions</div>
-              </CardTitle>
-              <CardDescription className="pl-1">
-                Manage your account security settings
+              <CardTitle className="flex pl-2">Recent Transactions</CardTitle>
+              <CardDescription className="pl-2">
+                Showing 3 of 3 transactions
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="flex flex-col p-2 ">
-                <div className="mb-4">
-                  <p className="font-bold">Password</p>
-                  <p>Last updated 2 months ago</p>
-                </div>
-                <div>
-                  <p className="font-bold">Two-Factor Authentication</p>
-                  <p>Add an extra layet of security</p>
-                </div>
-              </div>
+            <CardContent className="flex flex-col gap-4">
+              <Table>
+                <TableHeader></TableHeader>
+                <TableBody>
+                  <TableRow className="flex justify-between border-2  border-solid p-2 mb-2 rounded-lg ">
+                    <TableCell className="font-medium ">
+                      <div className="flex space-x-4 ">
+                        <div className="bg-econetBlue p-2 rounded-xl border border-white/10">
+                          <CardSim className="text-white size-6" />
+                        </div>
+                        <div>
+                          <p className="font-bold">80 MB DAILY BUNDLE</p>
+                          <p className="ml-auto">Redeemed at 08:32 24/08/25</p>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <p className="rounded-full border-2 border-red-500 bg-red-100 px-6 py-3 text-red-700">
+                        -200 E-Bucks
+                      </p>
+                    </TableCell>
+                  </TableRow>
+
+                  <TableRow className="flex justify-between border-2  border-solid p-2 mb-2 rounded-lg ">
+                    <TableCell className="font-medium ">
+                      <div className="flex space-x-4 ">
+                        <div className="bg-econetBlue p-2 rounded-xl border border-white/10">
+                          <PhoneCall className="text-white size-6" />
+                        </div>
+                        <div>
+                          <p className="font-bold">Voice Call - 8 Minutes</p>
+                          <p className="ml-auto">Redeemed at 16:44 22/08/25</p>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <p className="rounded-full border-2 border-green-500 bg-green-100 px-6 py-3 text-green-700">
+                        +25 E-Bucks
+                      </p>
+                    </TableCell>
+                  </TableRow>
+
+                  <TableRow className="flex justify-between border-2  border-solid p-2 mb-2 rounded-lg ">
+                    <TableCell className="font-medium ">
+                      <div className="flex space-x-4 ">
+                        <div className="bg-econetBlue p-2 rounded-xl border border-white/10">
+                          <PhoneCall className="text-white size-6" />
+                        </div>
+                        <div>
+                          <p className="font-bold">Voice Call - 12 Minutes</p>
+                          <p className="ml-auto">Redeemed at 17:03 18/08/25</p>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <p className="rounded-full border-2 border-green-500 bg-green-100 px-6 py-3 text-green-700">
+                        +25 E-Bucks
+                      </p>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
             </CardContent>
           </Card>
         </div>

@@ -257,28 +257,6 @@ export default function ExcelUploader(): JSX.Element {
     readExcelFileLocally(worksheetName);
   };
 
-  const downloadAsJSON = (): void => {
-    if (data.length === 0 || !file) return;
-
-    const dataStr = JSON.stringify(data, null, 2);
-    const dataBlob = new Blob([dataStr], { type: "application/json" });
-    const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `${file.name.split(".")[0]}_data.json`;
-    link.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const getTableHeaders = (): string[] => {
-    return data.length > 0 ? Object.keys(data[0]) : [];
-  };
-
-  const getCellValue = (row: ExcelRow, header: string): string => {
-    const value = row[header];
-    return value !== null && value !== undefined ? value.toString() : "";
-  };
-
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg">
       <h1 className="text-2xl font-bold mb-6 text-gray-800">
@@ -287,7 +265,7 @@ export default function ExcelUploader(): JSX.Element {
 
       {/* File Upload */}
       <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-gray-700 mb-2 mt-24">
           Upload Excel File
         </label>
         <input
@@ -352,80 +330,6 @@ export default function ExcelUploader(): JSX.Element {
       {error && (
         <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
           <p className="text-red-600">{error}</p>
-        </div>
-      )}
-
-      {/* Data Display */}
-      {data.length > 0 && (
-        <div className="mb-6">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-semibold text-gray-800">
-              Data Preview ({data.length} rows)
-            </h2>
-            <button
-              onClick={downloadAsJSON}
-              className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-md transition-colors"
-            >
-              📥 Download JSON
-            </button>
-          </div>
-
-          {/* Table */}
-          <div className="overflow-auto max-h-96 border border-gray-200 rounded-md">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50 sticky top-0">
-                <tr>
-                  {getTableHeaders().map((header: string) => (
-                    <th
-                      key={header}
-                      className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                    >
-                      {header}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {data.slice(0, 100).map((row: ExcelRow, index: number) => (
-                  <tr key={index} className="hover:bg-gray-50">
-                    {getTableHeaders().map(
-                      (header: string, cellIndex: number) => {
-                        const cellValue = getCellValue(row, header);
-                        return (
-                          <td
-                            key={cellIndex}
-                            className="px-4 py-3 whitespace-nowrap text-sm text-gray-900 max-w-xs truncate"
-                            title={cellValue}
-                          >
-                            {cellValue}
-                          </td>
-                        );
-                      }
-                    )}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            {data.length > 100 && (
-              <div className="p-4 bg-gray-50 text-center text-sm text-gray-600">
-                Showing first 100 rows of {data.length} total rows
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Data Summary */}
-      {data.length > 0 && file && (
-        <div className="bg-gray-50 p-4 rounded-md">
-          <h3 className="font-medium text-gray-800 mb-2">Data Summary</h3>
-          <ul className="text-sm text-gray-600 space-y-1">
-            <li>📁 File: {file.name}</li>
-            <li>📊 Worksheet: {selectedWorksheet}</li>
-            <li>📝 Rows: {data.length}</li>
-            <li>🗂️ Columns: {getTableHeaders().length}</li>
-            <li>🏷️ Headers: {getTableHeaders().join(", ")}</li>
-          </ul>
         </div>
       )}
     </div>
