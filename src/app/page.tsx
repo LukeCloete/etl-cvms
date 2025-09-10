@@ -7,7 +7,6 @@ export default async function Home() {
     method: "get",
   });
   const agent: Agent = response.data.agent;
-  console.log(agent);
 
   return (
     <main className="container mx-auto max-w-[800px]">
