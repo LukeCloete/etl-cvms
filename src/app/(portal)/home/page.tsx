@@ -8,7 +8,11 @@ import {
 } from "@/components/ui/card";
 import DashboardCard from "@/components/DashboardCard";
 import { History, Gift, CardSim, Lightbulb } from "lucide-react";
+import { getData } from "./_lib/data";
+// import getData from "../../";
 export default function page() {
+  getData();
+
   return (
     <div>
       <div className="flex p-8">
