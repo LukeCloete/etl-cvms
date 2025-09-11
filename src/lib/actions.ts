@@ -5,43 +5,8 @@ import { redirect } from "next/navigation";
 import { Models } from "appwrite";
 import { z } from "zod";
 import { createAdminClient, createSessionClient } from "@/appwrite/config";
-import * as ExcelJS from "exceljs";
-import { Client, Databases, TablesDB } from "node-appwrite";
 
-// Type definitions that match the component
-interface ExcelRow {
-  [key: string]: string | number | null;
-}
-
-interface ProcessExcelResult {
-  success: boolean;
-  data?: ExcelRow[];
-  worksheetNames?: string[];
-  error?: string;
-  metadata?: {
-    fileName: string;
-    selectedWorksheet: string;
-    totalRows: number;
-    totalColumns: number;
-    headers: string[];
-  };
-}
-// 📦 Define a type for tracking changes
-export interface ChangeLog {
-  msisdn: string;
-  type: "created" | "updated" | "deleted";
-  changes?: Record<string, { from: any; to: any }>;
-}
-
-// interface MyDocumentType extends Models.Document {
-//   $sequence: number;
-//   daterequired: string;
-//   last_usage_date: string;
-//   total_data_usage: number;
-//   total_voice_usage: number;
-//   total_sms_usage: number;
-//   msisdn: string;
-// }
+import { Query } from "node-appwrite";
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -56,7 +21,7 @@ export async function createSession(formData: FormData) {
   const data = Object.fromEntries(formData);
   const { email, password } = formSchema.parse(data);
 
-  const { account } = await createAdminClient();
+  const { tablesDB, account } = await createAdminClient();
   const session = await account.createEmailPasswordSession({
     email,
     password,
@@ -69,7 +34,26 @@ export async function createSession(formData: FormData) {
     path: "/",
   });
 
-  redirect("/home");
+  const { account: sessionAccount } = await createSessionClient(session.secret);
+  const user = await sessionAccount.get();
+
+  // Find the MSISDN document associated with the user's ID
+  const { rows: msisdnRows } = await tablesDB.listRows({
+    databaseId: process.env.APPWRITE_DATABASE_ID!,
+    tableId: "msisdns",
+    queries: [Query.equal("agent", user.$id)],
+  });
+
+  const msisdnDoc = msisdnRows[0] || null;
+  let redirectUrl = "/home";
+
+  if (msisdnDoc) {
+    redirectUrl = `/home?msisdn=${msisdnDoc.msisdn}`;
+  } else {
+    console.error(`No MSISDN found for user ID: ${user.$id}`);
+  }
+
+  redirect(redirectUrl);
 }
 
 /**
