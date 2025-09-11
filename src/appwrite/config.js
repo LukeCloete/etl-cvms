@@ -1,20 +1,22 @@
 import { Client, Account, TablesDB } from "node-appwrite";
 
 const createAdminClient = async () => {
-  const client = new Client()
-    .setEndpoint(process.env.APPWRITE_ENDPOINT)
-    .setProject(process.env.APPWRITE_PROJECT_ID)
-    .setKey(process.env.APPWRITE_API_DEV_KEY);
 
-  return {
-    get account() {
-      return new Account(client);
-    },
+    const client = new Client()
+        .setEndpoint(process.env.APPWRITE_ENDPOINT)
+        .setProject(process.env.APPWRITE_PROJECT_ID)
+        .setKey(process.env.APPWRITE_API_DEV_KEY);
 
-    get tablesDB() {
-      return new TablesDB(client);
-    },
-  };
+    return {
+        get account() {
+            return new Account(client);
+        },
+
+        get tablesDB() {
+            return new TablesDB(client);
+        },
+    };
+
 };
 
 const createSessionClient = async (session) => {
