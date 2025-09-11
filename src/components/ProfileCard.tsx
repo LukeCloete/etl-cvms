@@ -5,7 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { User, Phone, Calendar } from "lucide-react";
+import { User, Phone, Calendar, Badge } from "lucide-react";
 export default function DashboardCard({
   name,
   tier,
@@ -27,7 +27,7 @@ export default function DashboardCard({
           </CardTitle>
         </CardHeader>
         <CardContent className=" flex">
-          <div>
+          <div className="rounded-full border-2 border-amber-500 bg-amber-100 px-6 py-1 text-amber-700">
             <p>{tier}</p>
           </div>
         </CardContent>

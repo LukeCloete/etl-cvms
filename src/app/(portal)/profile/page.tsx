@@ -1,3 +1,4 @@
+import ProfileCard from "@/components/ProfileCard";
 import {
   Card,
   CardContent,
@@ -125,37 +126,12 @@ export default function page() {
         </div>
 
         {/* Profile card */}
-        <div className="w-1/4 flex flex-col gap-4 mr-4">
-          <Card className="bg-econetBlue text-econetWhite p-4 rounded-lg flex flex-col justify-center items-center">
-            <CardHeader>
-              <CardTitle className="flex flex-col items-center justify-center gap-2">
-                <User />
-                Dennis Plaatjies
-              </CardTitle>
-            </CardHeader>
-            <CardContent className=" flex">
-              <div>
-                <p>GOLD</p>
-              </div>
-            </CardContent>
-            <CardContent className="flex space-x-2">
-              <div>
-                <Phone />
-              </div>
-              <div>
-                <p>+266 123 4567</p>
-              </div>
-            </CardContent>
-            <CardContent className=" flex space-x-2">
-              <div>
-                <Calendar />
-              </div>
-              <div>
-                <p>Memeber since January 2025</p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        <ProfileCard
+          name={"Agent Name"}
+          tier={"Gold"}
+          phoneNumber={"+266 123 4567"}
+          memberSinceDate={"January 2025"}
+        ></ProfileCard>
       </div>
     </div>
   );
