@@ -52,7 +52,7 @@ export async function GET(req: NextRequest) {
       queries: [Query.equal("msisdn", msisdnDocId)],
     });
 
-    const performanceData = performanceRows[0] || null;
+    const performanceData = performanceRows || null;
 
     if (!performanceData) {
       return NextResponse.json(
@@ -61,7 +61,7 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    return NextResponse.json({ performanceData: performanceData });
+    return NextResponse.json({ performanceData });
   } catch (error) {
     console.error("Error fetching performance data:", error);
   }
