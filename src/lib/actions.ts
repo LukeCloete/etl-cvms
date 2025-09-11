@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { Models } from "appwrite";
 import { z } from "zod";
 import { createAdminClient, createSessionClient } from "@/appwrite/config";
+import { Query } from "node-appwrite";
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -19,7 +20,7 @@ export async function createSession(formData: FormData) {
   const data = Object.fromEntries(formData);
   const { email, password } = formSchema.parse(data);
 
-  const { account } = await createAdminClient();
+  const { tablesDB, account } = await createAdminClient();
   const session = await account.createEmailPasswordSession({
     email,
     password,
@@ -32,7 +33,26 @@ export async function createSession(formData: FormData) {
     path: "/",
   });
 
-  redirect("/home");
+  const { account: sessionAccount } = await createSessionClient(session.secret);
+  const user = await sessionAccount.get();
+
+  // Find the MSISDN document associated with the user's ID
+  const { rows: msisdnRows } = await tablesDB.listRows({
+    databaseId: process.env.APPWRITE_DATABASE_ID!,
+    tableId: "msisdns",
+    queries: [Query.equal("agent", user.$id)],
+  });
+
+  const msisdnDoc = msisdnRows[0] || null;
+  let redirectUrl = "/home";
+
+  if (msisdnDoc) {
+    redirectUrl = `/home?msisdn=${msisdnDoc.msisdn}`;
+  } else {
+    console.error(`No MSISDN found for user ID: ${user.$id}`);
+  }
+
+  redirect(redirectUrl);
 }
 
 /**

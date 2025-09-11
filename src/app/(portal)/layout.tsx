@@ -1,4 +1,4 @@
-import NavbarWrapper from "@/components/NavbarWrapper";
+import Navbar from "@/components/Navbar";
 
 export default async function Layout({
   children,
@@ -7,7 +7,7 @@ export default async function Layout({
 }) {
   return (
     <html lang="en">
-      <NavbarWrapper />
+      <Navbar />
       <body>{children}</body>
     </html>
   );

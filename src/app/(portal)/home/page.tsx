@@ -9,7 +9,7 @@ import {
 import DashboardCard from "@/components/DashboardCard";
 import { History, Gift, CardSim, Lightbulb } from "lucide-react";
 import axiosInstance from "@/lib/axiosInstance";
-import { Agent } from "@/lib/definitions";
+import { Agents, Core_Spend, Performance_Rankings } from "@/lib/definitions";
 import { redirect } from "next/navigation";
 import Cards from "./_components/Cards";
 import { cookies } from "next/headers";
@@ -46,20 +46,32 @@ async function getPerformanceData(msisdn: string) {
   return res.json();
 }
 
+async function getAgentData() {
+  const res = await fetch(`http://localhost:3000/api/agent/me`, {
+    method: "get",
+    headers: {
+      Cookie: cookies().toString(),
+    },
+  });
+  return res.json();
+}
+
 export default async function page({ searchParams }: HomeProps) {
-  const agentName = "Agent";
+  let agentName = "Agent";
 
   const msisdn = searchParams.msisdn!;
 
-  const coreSpendData: any = await getCoreSpendData(msisdn);
-  const performanceData: any = await getPerformanceData(msisdn);
+  const agentData: Agents = await getAgentData();
+  const coreSpendData: Core_Spend = await getCoreSpendData(msisdn);
+  const performanceData: Performance_Rankings = await getPerformanceData(
+    msisdn
+  );
 
-  const [coreSpend, performance] = await Promise.all([
+  const [agent, coreSpend, performance] = await Promise.all([
+    agentData,
     coreSpendData,
     performanceData,
   ]);
-
-  const agentData = { coreSpend, performance };
 
   return (
     <div>
@@ -69,7 +81,7 @@ export default async function page({ searchParams }: HomeProps) {
             <p>Home </p>
           </div>
           <p className="mb-8 text-econetBlue text-3xl font-bold">
-            Welcome {agentName}
+            Welcome {agent.name}
           </p>
 
           <Card className=" bg-econetBlue text-econetWhite mb-4">
@@ -81,7 +93,7 @@ export default async function page({ searchParams }: HomeProps) {
             </CardHeader>
             <CardContent className="">
               <p className="text-4xl font-bold">
-                {coreSpendData?.WEEKLY_VALUE || "N/A"}
+                {/* {coreSpendData?.WEEKLY_VALUE || "N/A"} */}
               </p>
               <p> Earn more E-Bucks to reach the next tier</p>
             </CardContent>
@@ -90,7 +102,7 @@ export default async function page({ searchParams }: HomeProps) {
             </CardFooter>
           </Card>
 
-          <Cards data={agentData} />
+          {/* <Cards data={agentData} /> */}
 
           <Card className="mb-8">
             <CardHeader>
