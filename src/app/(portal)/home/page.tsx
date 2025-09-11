@@ -9,7 +9,6 @@ import {
 import DashboardCard from "@/components/DashboardCard";
 import { History, Gift, CardSim, Lightbulb } from "lucide-react";
 
-
 import axiosInstance from "@/lib/axiosInstance";
 import { Agents, Core_Spend, Performance_Rankings } from "@/lib/definitions";
 import { redirect } from "next/navigation";
@@ -75,10 +74,7 @@ export default async function page({ searchParams }: HomeProps) {
     performanceData,
   ]);
 
-
-  const agentData = { coreSpend, performance };
-
-
+  const cardData = { coreSpend, performance };
 
   return (
     <div>
@@ -109,7 +105,7 @@ export default async function page({ searchParams }: HomeProps) {
             </CardFooter>
           </Card>
 
-          {/* <Cards data={agentData} /> */}
+          <Cards spendData={{ coreSpend }} performanceData={{ performance }} />
 
           <Card className="mb-8">
             <CardHeader>
