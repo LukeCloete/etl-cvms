@@ -13,6 +13,7 @@ import { Agents, Core_Spend, Performance_Rankings } from "@/lib/definitions";
 import { redirect } from "next/navigation";
 import Cards from "./_components/Cards";
 import { cookies } from "next/headers";
+import HomeCard from "./_components/HomeCard";
 
 interface HomeProps {
   searchParams: {
@@ -56,14 +57,16 @@ async function getAgentData() {
   return res.json();
 }
 
-export default async function page({ searchParams }: HomeProps) {
-  let agentName = "Agent";
+interface AgentResponse {
+  agent: Agents;
+}
 
+export default async function page({ searchParams }: HomeProps) {
   const msisdn = searchParams.msisdn!;
 
-  const agentData: Agents = await getAgentData();
+  const agentData: AgentResponse = await getAgentData();
   const coreSpendData: Core_Spend = await getCoreSpendData(msisdn);
-  const performanceData: Performance_Rankings = await getPerformanceData(
+  const performanceData: Performance_Rankings[] = await getPerformanceData(
     msisdn
   );
 
@@ -73,6 +76,18 @@ export default async function page({ searchParams }: HomeProps) {
     performanceData,
   ]);
 
+  console.log(agent);
+
+  const activeMsisddn = agent.agent.msisdns.find(
+    (m) => m.msisdn === parseInt(msisdn)
+  );
+
+  const currentEbucksBalance = activeMsisddn?.current_ebucks_balance || 0;
+  const currentPerformanceScore = activeMsisddn?.current_performance_score || 0;
+
+  console.log("currentEbucksBalance:", currentEbucksBalance);
+  console.log("currentPerformanceScore:", currentPerformanceScore);
+
   return (
     <div>
       <div className="flex p-8">
@@ -81,28 +96,12 @@ export default async function page({ searchParams }: HomeProps) {
             <p>Home </p>
           </div>
           <p className="mb-8 text-econetBlue text-3xl font-bold">
-            Welcome {agent.name}
+            Welcome {agent.agent.name || "Agent"}
           </p>
 
-          <Card className=" bg-econetBlue text-econetWhite mb-4">
-            <CardHeader>
-              <CardTitle>Your E-Bucks Balance</CardTitle>
-              <CardDescription className="text-econetWhite">
-                Earn more with every Econet service
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="">
-              <p className="text-4xl font-bold">
-                {/* {coreSpendData?.WEEKLY_VALUE || "N/A"} */}
-              </p>
-              <p> Earn more E-Bucks to reach the next tier</p>
-            </CardContent>
-            <CardFooter>
-              <p>THE LONG BAR</p>
-            </CardFooter>
-          </Card>
+          <HomeCard />
 
-          {/* <Cards data={agentData} /> */}
+          <Cards coreSpendData={coreSpend} performanceData={performance} />
 
           <Card className="mb-8">
             <CardHeader>

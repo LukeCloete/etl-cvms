@@ -2,6 +2,8 @@ export interface Msisdns {
   $id: string;
   msisdn: number;
   agent: Agents[];
+  current_ebucks_balance: number;
+  current_performance_score: number;
   $createdAt: Date;
   $updatedAt: Date;
 }
@@ -30,14 +32,14 @@ export interface Core_Spend {
 
 export interface Performance_Rankings {
   $id: string;
-  txt_week: Date;
+  txn_week: Date;
   weekly_transactions: number;
-  prev_weekly_txt: number;
-  txt_grwoth_pct: number;
+  prev_weekly_txn: number;
+  txn_growth_pct: number;
   weekly_value: number;
   prev_weekly_value: number;
   value_growth_pct: number;
-  avg_value_per_txt: number;
+  avg_value_per_txn: number;
   prev_avg_value_per_txn: number;
   avg_growth_pct: number;
   performance_score: number;

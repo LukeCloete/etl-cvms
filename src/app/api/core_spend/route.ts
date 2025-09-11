@@ -63,7 +63,7 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    return NextResponse.json({ spendData: coreSpendData });
+    return NextResponse.json({ coreSpendData });
   } catch (error) {
     console.error("Error fetching core spend data:", error);
   }
