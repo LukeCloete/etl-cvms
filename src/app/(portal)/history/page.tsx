@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { PhoneCall } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -55,52 +56,50 @@ export default function page() {
 
           <div className="flex justify-center gap-4 mb-8">
             <Card className="w-1/3">
-              <CardHeader>
-                <CardTitle>Total Earned</CardTitle>
-              </CardHeader>
-              <CardContent className="flex justify-between items-center">
-                <p className="text-green-500 text-2xl">5 200</p>
-                <TrendingUp className="text-green-500" />
+              <CardContent className="flex justify-between ">
+                <div className="flex flex-col space-y-1  mt-9">
+                  <p className="font-bold">Total Earned</p>
+                  <p className="text-green-500 text-2xl font-bold">5 200</p>
+                  <p>E-Bucks</p>
+                </div>
+                <TrendingUp className="text-green-500 mt-16" />
               </CardContent>
-              <CardFooter>
-                <p>E-Bucks</p>
-              </CardFooter>
             </Card>
+
             <Card className="w-1/3">
-              <CardHeader>
-                <CardTitle>Total Redeemed</CardTitle>
-              </CardHeader>
-              <CardContent className="flex justify-between items-center">
-                <p className="text-red-500 text-2xl">200</p>
-                <TrendingDown className="text-red-500" />
+              <CardContent className="flex justify-between  ">
+                <div className="flex flex-col space-y-1 mt-9">
+                  <p className="font-bold">Total Redeemed</p>
+                  <p className="text-red-500 text-2xl font-bold">1 000</p>
+                  <p>E-Bucks</p>
+                </div>
+                <TrendingDown className="text-red-500 mt-16" />
               </CardContent>
-              <CardFooter>
-                <p>E-Bucks</p>
-              </CardFooter>
             </Card>
+
             <Card className="w-1/3">
-              <CardHeader>
-                <CardTitle>Current Balance</CardTitle>
-              </CardHeader>
-              <CardContent className="flex justify-between items-center">
-                <p className="text-blue-500 text-2xl">5 000</p>
-                <LayoutPanelLeft className="text-blue-500" />
+              <CardContent className="flex justify-between  ">
+                <div className="flex flex-col space-y-1 mt-9">
+                  <p className="font-bold">Current Balance</p>
+                  <p className="text-blue-500 text-2xl font-bold">5 000</p>
+                  <p>E-Bucks</p>
+                </div>
+                <LayoutPanelLeft className="text-blue-500 mt-16" />
               </CardContent>
-              <CardFooter>
-                <p>E-Bucks</p>
-              </CardFooter>
             </Card>
           </div>
 
           {/* Filter Transactions */}
           <Card className="mb-8">
             <CardHeader>
-              <CardTitle className="flex">
-                <Funnel />
-                Filter Transactions
+              <CardTitle className="flex space-x-2">
+                <div>
+                  <Funnel />
+                </div>
+                <div>Filter Transactions</div>
               </CardTitle>
               <CardDescription className="pl-2">
-                Manage your account security settings
+                Search through your transactions
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -156,12 +155,9 @@ export default function page() {
           {/* Recent Transactions */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex">
-                <Bell />
-                Recent Transactions
-              </CardTitle>
+              <CardTitle className="flex pl-2">Recent Transactions</CardTitle>
               <CardDescription className="pl-2">
-                Choose how you want to receive notifications
+                Showing 3 of 3 transactions
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-4">
@@ -180,8 +176,48 @@ export default function page() {
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell className="bg-econetBlue  text-econetWhite ml-auto flex rounded-full justify-center items-center">
-                      <p>+25 E-Bucks</p>
+                    <TableCell>
+                      <p className="rounded-full border-2 border-red-500 bg-red-100 px-6 py-3 text-red-700">
+                        -200 E-Bucks
+                      </p>
+                    </TableCell>
+                  </TableRow>
+
+                  <TableRow className="flex justify-between border-2  border-solid p-2 mb-2 rounded-lg ">
+                    <TableCell className="font-medium ">
+                      <div className="flex space-x-4 ">
+                        <div className="bg-econetBlue p-2 rounded-xl border border-white/10">
+                          <PhoneCall className="text-white size-6" />
+                        </div>
+                        <div>
+                          <p className="font-bold">Voice Call - 8 Minutes</p>
+                          <p className="ml-auto">Redeemed at 16:44 22/08/25</p>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <p className="rounded-full border-2 border-green-500 bg-green-100 px-6 py-3 text-green-700">
+                        +25 E-Bucks
+                      </p>
+                    </TableCell>
+                  </TableRow>
+
+                  <TableRow className="flex justify-between border-2  border-solid p-2 mb-2 rounded-lg ">
+                    <TableCell className="font-medium ">
+                      <div className="flex space-x-4 ">
+                        <div className="bg-econetBlue p-2 rounded-xl border border-white/10">
+                          <PhoneCall className="text-white size-6" />
+                        </div>
+                        <div>
+                          <p className="font-bold">Voice Call - 12 Minutes</p>
+                          <p className="ml-auto">Redeemed at 17:03 18/08/25</p>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <p className="rounded-full border-2 border-green-500 bg-green-100 px-6 py-3 text-green-700">
+                        +25 E-Bucks
+                      </p>
                     </TableCell>
                   </TableRow>
                 </TableBody>
