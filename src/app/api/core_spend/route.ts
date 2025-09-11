@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
 
   const url = new URL(req.url);
   const msisdn = url.searchParams.get("msisdn");
-  console.log(msisdn);
+  // console.log(msisdn);
 
   if (!sessionCookie) {
     return NextResponse.json(
@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
     });
 
     const msisdnDoc = msisdnRows[0] || null;
-    console.log(msisdnDoc);
+    // console.log("msisdnDoc", msisdnDoc);
 
     if (!msisdnDoc) {
       return NextResponse.json(
@@ -55,6 +55,7 @@ export async function GET(req: NextRequest) {
     });
 
     const coreSpendData = coreSpendRows[0] || null;
+    // console.log("coreSpendData", coreSpendData);
 
     if (!coreSpendData) {
       return NextResponse.json(

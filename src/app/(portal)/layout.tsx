@@ -6,11 +6,13 @@ export default async function Layout({
   children: React.ReactNode;
 }) {
   return (
+
     <html lang="en" suppressHydrationWarning>
       <body>
         <Navbar />
         {children}
       </body>
+
     </html>
   );
 }
