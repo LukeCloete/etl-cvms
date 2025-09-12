@@ -16,13 +16,13 @@ import Cards from "./_components/Cards";
 import { cookies } from "next/headers";
 import HomeCard from "./_components/HomeCard";
 
-interface HomeProps {
+export interface HomeProps {
   searchParams: {
     msisdn?: string;
   };
 }
 
-async function getCoreSpendData(msisdn: string) {
+export async function getCoreSpendData(msisdn: string) {
   const res = await fetch(
     `http://localhost:3000/api/core_spend?msisdn=${msisdn}`,
     {
@@ -35,7 +35,7 @@ async function getCoreSpendData(msisdn: string) {
   return res.json();
 }
 
-async function getPerformanceData(msisdn: string) {
+export async function getPerformanceData(msisdn: string) {
   const res = await fetch(
     `http://localhost:3000/api/performance?msisdn=${msisdn}`,
     {
@@ -48,7 +48,7 @@ async function getPerformanceData(msisdn: string) {
   return res.json();
 }
 
-async function getAgentData() {
+export async function getAgentData() {
   const res = await fetch(`http://localhost:3000/api/agent/me`, {
     method: "get",
     headers: {
@@ -77,7 +77,6 @@ export default async function page({ searchParams }: HomeProps) {
     performanceData,
   ]);
 
-
   console.log(agent);
 
   const activeMsisddn = agent.agent.msisdns.find(
@@ -89,9 +88,6 @@ export default async function page({ searchParams }: HomeProps) {
 
   console.log("currentEbucksBalance:", currentEbucksBalance);
   console.log("currentPerformanceScore:", currentPerformanceScore);
-
-
-
 
   return (
     <div>
@@ -106,9 +102,7 @@ export default async function page({ searchParams }: HomeProps) {
 
           <HomeCard />
 
-
           <Cards coreSpendData={coreSpend} performanceData={performance} />
-
 
           <Card className="mb-8">
             <CardHeader>
