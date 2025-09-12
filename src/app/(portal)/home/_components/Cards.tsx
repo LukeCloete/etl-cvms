@@ -1,7 +1,6 @@
 import DashboardCard from "@/components/DashboardCard";
 import { Core_Spend, Performance_Rankings } from "@/lib/definitions";
 
-
 interface CardsProps {
   coreSpendData: { coreSpendData: Core_Spend };
   performanceData: { performanceData: Performance_Rankings }[];
@@ -36,30 +35,22 @@ export default function Cards({ coreSpendData, performanceData }: any) {
     (item) => item.txn_type === "CASHOUT"
   );
 
-
   return (
     <div className="flex justify-center gap-4 mb-8">
       <DashboardCard
         title={"Total Daily Data"}
-
         date={formatDate(coreSpendData.coreSpendData.date.toString())}
         value={`${coreSpendData.coreSpendData.total_data_usage || "0"} MB`}
-
       ></DashboardCard>
 
-      {/* <DashboardCard
+      <DashboardCard
         title={"Total Daily SMS"}
-
         date={formatDate(coreSpendData.coreSpendData.date.toString())}
         value={`${coreSpendData.coreSpendData.total_sms_usage || "0"} SMS`}
       ></DashboardCard>
 
-
-
-
-      {/* <DashboardCard
+      <DashboardCard
         title={"Total Daily Voice"}
-
         date={formatDate(coreSpendData.coreSpendData.date.toString())}
         value={`${coreSpendData.coreSpendData.total_voice_usage || "0"} Mins`}
       ></DashboardCard>
@@ -79,9 +70,6 @@ export default function Cards({ coreSpendData, performanceData }: any) {
           value={`${mostRecentCashOut?.weekly_value || "0"} LSL`}
         ></DashboardCard>
       )}
-
-
-
     </div>
   );
 }
