@@ -261,7 +261,7 @@ export default async function page({ searchParams }: HomeProps) {
             <CardHeader>
               <CardTitle className="flex pl-2">Recent Transactions</CardTitle>
               <CardDescription className="pl-2">
-                Showing 3 of 3 transactions
+                View your transactions
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-4">
