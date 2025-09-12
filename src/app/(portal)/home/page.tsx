@@ -106,6 +106,7 @@ export default async function page({ searchParams }: HomeProps) {
       ebucksLogData,
     ]);
 
+
   console.log(agent);
 
   const activeMsisddn = agent.agent.msisdns.find(
@@ -117,6 +118,9 @@ export default async function page({ searchParams }: HomeProps) {
 
   console.log("currentEbucksBalance:", currentEbucksBalance);
   console.log("currentPerformanceScore:", currentPerformanceScore);
+
+
+
 
   return (
     <div>
@@ -131,7 +135,9 @@ export default async function page({ searchParams }: HomeProps) {
             eBucksTiers={ebucksTiers.ebucks_tiers || []}
           />
 
+
           <Cards coreSpendData={coreSpend} performanceData={performance} />
+
 
           <Card className="mb-8">
             <CardHeader>
