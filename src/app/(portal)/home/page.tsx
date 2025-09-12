@@ -15,6 +15,7 @@ import { redirect } from "next/navigation";
 import Cards from "./_components/Cards";
 import { cookies } from "next/headers";
 import HomeCard from "./_components/HomeCard";
+import RecentActivity from "./_components/RecentActivity";
 
 interface HomeProps {
   searchParams: {
@@ -58,6 +59,29 @@ async function getAgentData() {
   return res.json();
 }
 
+async function getEbucksTiers() {
+  const res = await fetch(`http://localhost:3000/api/ebucks_tiers`, {
+    method: "get",
+    headers: {
+      Cookie: cookies().toString(),
+    },
+  });
+  return res.json();
+}
+
+async function getEbucksLog(msisdn: string) {
+  const res = await fetch(
+    `http://localhost:3000/api/ebucks_log?msisdn=${msisdn}`,
+    {
+      method: "get",
+      headers: {
+        Cookie: cookies().toString(),
+      },
+    }
+  );
+  return res.json();
+}
+
 interface AgentResponse {
   agent: Agents;
 }
@@ -70,12 +94,17 @@ export default async function page({ searchParams }: HomeProps) {
   const performanceData: Performance_Rankings[] = await getPerformanceData(
     msisdn
   );
+  const ebucksTiersData = await getEbucksTiers();
+  const ebucksLogData = await getEbucksLog(msisdn);
 
-  const [agent, coreSpend, performance] = await Promise.all([
-    agentData,
-    coreSpendData,
-    performanceData,
-  ]);
+  const [agent, coreSpend, performance, ebucksTiers, ebucksLog] =
+    await Promise.all([
+      agentData,
+      coreSpendData,
+      performanceData,
+      ebucksTiersData,
+      ebucksLogData,
+    ]);
 
   console.log(agent);
 
@@ -91,16 +120,16 @@ export default async function page({ searchParams }: HomeProps) {
 
   return (
     <div>
-      <div className="flex p-8">
-        <div className="w-2/3 mr-12 ml-4 ">
-          <div className="text-econetBlue mb-4">
-            <p>Home </p>
-          </div>
-          <p className="mb-8 text-econetBlue text-3xl font-bold">
+      <div className="flex p-8 gap-8">
+        <div className="w-2/3 flex flex-col gap-8">
+          <p className="text-econetBlue text-3xl font-bold">
             Welcome {agent.agent.name || "Agent"}
           </p>
 
-          <HomeCard />
+          <HomeCard
+            msisdn={activeMsisddn!}
+            eBucksTiers={ebucksTiers.ebucks_tiers || []}
+          />
 
           <Cards coreSpendData={coreSpend} performanceData={performance} />
 
@@ -155,34 +184,7 @@ export default async function page({ searchParams }: HomeProps) {
         </div>
 
         <div className="w-1/3 flex flex-col gap-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex space-x-2 text-econetBlue ">
-                <div>
-                  <History />
-                </div>
-                <div>Your Recent Activity</div>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="flex">
-              <div>
-                <p className="font-bold">E-Bucks Earned</p>
-                <p>Call made - 12 min</p>
-              </div>
-              <p className="bg-econetBlue p-2 text-econetWhite ml-auto flex rounded-full justify-center items-center">
-                +25 E-Bucks
-              </p>
-            </CardContent>
-            <CardContent className=" flex">
-              <div>
-                <p className="font-bold">E-Bucks Earned</p>
-                <p>Call made - 16 min</p>
-              </div>
-              <p className="bg-econetBlue p-2 text-econetWhite ml-auto flex rounded-full justify-center items-center">
-                +25 E-Bucks
-              </p>
-            </CardContent>
-          </Card>
+          <RecentActivity ebucksLog={ebucksLog} />
 
           <Card>
             <CardHeader>

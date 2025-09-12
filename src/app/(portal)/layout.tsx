@@ -7,7 +7,7 @@ export default async function Layout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body>
+      <body className="pt-16">
         <Navbar />
         {children}
       </body>
