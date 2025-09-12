@@ -24,6 +24,9 @@ import { createSession } from "@/lib/actions";
 const formSchema = z.object({
   emailAddress: z.string().email({ message: "Email address is not valid." }),
   password: z.string().min(3, "Please enter a password."),
+  firstName: z.string().min(1, "Please enter your first name."),
+  lastName: z.string().min(1, "Please enter your last name."),
+  msisdn: z.string().min(10, "Please enter a valid EcoCash phone number."),
 });
 
 export default function Page() {
@@ -33,6 +36,9 @@ export default function Page() {
     defaultValues: {
       emailAddress: "",
       password: "",
+      firstName: "",
+      lastName: "",
+      msisdn: "",
     },
   });
 
@@ -58,7 +64,7 @@ export default function Page() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen w-full">
+    <div className="flex flex-col items-center gap-8 justify-center h-screen w-full">
       <div className="relative items-center justify-center w-full max-w-md">
         <Image
           src={COMPANY_LOGO}
@@ -76,12 +82,54 @@ export default function Page() {
               <div className="flex flex-col gap-4">
                 <FormField
                   control={form.control}
+                  name="firstName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>First Name</FormLabel>
+                      <FormControl>
+                        <Input type="text" {...field} />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="lastName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Last Name</FormLabel>
+                      <FormControl>
+                        <Input type="text" {...field} />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
                   name="emailAddress"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Email Address</FormLabel>
                       <FormControl>
                         <Input type="email" {...field} />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="msisdn"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>EcoCash Phone Number</FormLabel>
+                      <FormControl>
+                        <Input type="number" {...field} />
                       </FormControl>
 
                       <FormMessage />
@@ -109,14 +157,14 @@ export default function Page() {
                 className="w-full bg-econetBlue disabled:bg-gray-300"
                 disabled={isLoading}
               >
-                Log In As EcoCash Agent
+                Sign Up As EcoCash Agent
               </Button>
             </form>
           </Form>
           <div className="flex gap-2 text-sm">
-            <p>New to EcoCash Agent Rewards?</p>
-            <Link href="/sign-up" className=" text-econetBlue">
-              Create an account
+            <p>Already an EcoCash Rewards member?</p>
+            <Link href="/log-in" className=" text-econetBlue">
+              Sign into your account
             </Link>
           </div>
         </div>

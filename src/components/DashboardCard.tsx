@@ -17,12 +17,14 @@ export default function DashboardCard({
   return (
     <Card className="rounded-xl w-1/5">
       <CardHeader>
-        <p>{title}</p>
-        <CardDescription>Last updated as of: {date}</CardDescription>
+        <CardTitle className="text-lg">{title}</CardTitle>
+        <CardDescription className="text-xs ">
+          Last updated as of: {date}
+        </CardDescription>
       </CardHeader>
 
       <CardContent>
-        <CardTitle className="text-lg">{value}</CardTitle>
+        <p className="text-xl">{value}</p>
       </CardContent>
     </Card>
   );

@@ -4,6 +4,7 @@ export interface Msisdns {
   agent: Agents[];
   current_ebucks_balance: number;
   current_performance_score: number;
+  current_performance_rank: number;
   $createdAt: Date;
   $updatedAt: Date;
 }

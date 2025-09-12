@@ -5,6 +5,7 @@ import COMPANY_LOGO from "../public/etl-logo.png";
 import Image from "next/image";
 import NavbarUserContent, { LoadingSkeleton } from "./NavbarUserContent";
 import { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 
 // Define the links
 const Links = [
@@ -14,6 +15,8 @@ const Links = [
 ];
 
 export default function Navbar() {
+  const params = useSearchParams();
+  const msisdn = params.get("msisdn");
   return (
     <nav className="fixed top-0 px-8 py-2 w-full flex items-center justify-center h-fit">
       <div className="px-2 bg-white flex justify-between rounded-lg border border-blue-800/20 shadow-md shadow-blue-800/20 w-full">
@@ -28,7 +31,10 @@ export default function Navbar() {
           </div>
           <div className="flex items-center justify-center gap-2 font-semibold text-econetBlue">
             {Links.map((link, index) => (
-              <Link key={index} href={link.href}>
+              <Link
+                key={index}
+                href={`${link.href}${msisdn ? `?msisdn=${msisdn}` : ""}`}
+              >
                 {link.name}
               </Link>
             ))}

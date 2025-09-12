@@ -84,16 +84,20 @@ export default function NavbarUserContent() {
             <SelectGroup>
               <SelectLabel>Your MSISDN numbers</SelectLabel>
               {agent.msisdns.map((msisdn) => (
-                <SelectItem key={msisdn.$id} value={msisdn.msisdn.toString()}>
+                <SelectItem
+                  key={msisdn.$id}
+                  value={msisdn.msisdn.toString()}
+                  className="space-x-2"
+                >
                   {msisdn.msisdn}
+                  <Badge className="border-2 ml-2 border-yellow-500 hover:bg-yellow-500/20 bg-yellow-500/20 text-yellow-500">
+                    Gold
+                  </Badge>
                 </SelectItem>
               ))}
             </SelectGroup>
           </SelectContent>
         </Select>
-        <Badge className="border-2 border-yellow-500 hover:bg-yellow-500/20 bg-yellow-500/20 text-yellow-500">
-          Gold
-        </Badge>
       </div>
       <User />
     </div>
