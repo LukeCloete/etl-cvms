@@ -39,7 +39,105 @@ import {
   TrendingDown,
   CardSim,
 } from "lucide-react";
-export default function page() {
+import { cn } from "@/lib/utils";
+import { getPerformanceData } from "../home/page";
+import { getAgentData } from "../home/page";
+import { Agents, Core_Spend, Performance_Rankings } from "@/lib/definitions";
+import {
+  ColumnDef,
+  ColumnFiltersState,
+  SortingState,
+  flexRender,
+  VisibilityState,
+  getCoreRowModel,
+  getPaginationRowModel,
+  getFilteredRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import { cookies } from "next/headers";
+import TranTable from "./_components/TranTable";
+
+interface HomeProps {
+  searchParams: {
+    msisdn?: string;
+  };
+}
+
+async function getEbucksData(msisdn: string) {
+  const res = await fetch(`http://localhost:3000/api/ebucks?msisdn=${msisdn}`, {
+    method: "get",
+    headers: {
+      Cookie: cookies().toString(),
+    },
+  });
+  return res.json();
+}
+
+export default async function page({ searchParams }: HomeProps) {
+  // const [sorting, setSorting] = useState([]);
+  // const [columnFilters, setColumnFilters] = useState([]);
+  // const [columnVisibility, setColumnVisibility] = useState({});
+  // const [rowSelection, setRowSelection] = useState({});
+
+  // const table = useReactTable({
+  //   data,
+  //   columns,
+  //   getCoreRowModel: getCoreRowModel(),
+  //   getPaginationRowModel: getPaginationRowModel(),
+  //   onSortingChange: setSorting,
+  //   onColumnFiltersChange: setColumnFilters,
+  //   getFilteredRowModel: getFilteredRowModel(),
+  //   onColumnVisibilityChange: setColumnVisibility,
+  //   getSortedRowModel: getSortedRowModel(),
+  //   onRowSelectionChange: setRowSelection,
+  //   state: {
+  //     sorting,
+  //     columnFilters,
+  //     columnVisibility,
+  //     rowSelection,
+  //   },
+  // });
+  console.log("This is in the history page");
+  const msisdn = searchParams.msisdn!;
+
+  /* When i specify the data to be Performance_Rankings[] instead of any i get errors */
+  const agentData = await getAgentData();
+  const performanceData = await getPerformanceData(msisdn);
+  const ebucksData = await getEbucksData(msisdn);
+
+  const [agent, performance, ebucks] = await Promise.all([
+    agentData,
+    performanceData,
+    ebucksData,
+  ]);
+
+  const activeMsisddn = agent.agent.msisdns.find(
+    (m: any) => m.msisdn === parseInt(msisdn)
+  );
+  const currentEbucksBalance = activeMsisddn?.current_ebucks_balance || 0;
+
+  const totalRedeemed = 1000;
+  const remainingBalance = currentEbucksBalance - totalRedeemed;
+
+  // console.log("This is the performance: ", performance);
+
+  const cashInData = performance.performanceData.filter(
+    (item: any) => item.txn_type === "CASHIN"
+  );
+  const cashOutData = performance.performanceData.filter(
+    (item: any) => item.txn_type === "CASHOUT"
+  );
+  // console.log("Cash-In Data:", cashInData);
+  // console.log("This is cashInData: ", cashInData);
+  // console.log(cashInData.txn_week);
+  /* Gather  */
+  // console.log("-------------");
+  // console.log(ebucks);
+
+  // console.log("NEW LINE NEW LINE NEW LINE");
+  // console.log(performance);
+
   return (
     <div>
       <div className="flex p-8">
@@ -59,7 +157,9 @@ export default function page() {
               <CardContent className="flex justify-between ">
                 <div className="flex flex-col space-y-1  mt-9">
                   <p className="font-bold">Total Earned</p>
-                  <p className="text-green-500 text-2xl font-bold">5 200</p>
+                  <p className="text-green-500 text-2xl font-bold">
+                    {currentEbucksBalance}
+                  </p>
                   <p>E-Bucks</p>
                 </div>
                 <TrendingUp className="text-green-500 mt-16" />
@@ -70,7 +170,9 @@ export default function page() {
               <CardContent className="flex justify-between  ">
                 <div className="flex flex-col space-y-1 mt-9">
                   <p className="font-bold">Total Redeemed</p>
-                  <p className="text-red-500 text-2xl font-bold">1 000</p>
+                  <p className="text-red-500 text-2xl font-bold">
+                    {totalRedeemed}
+                  </p>
                   <p>E-Bucks</p>
                 </div>
                 <TrendingDown className="text-red-500 mt-16" />
@@ -81,7 +183,9 @@ export default function page() {
               <CardContent className="flex justify-between  ">
                 <div className="flex flex-col space-y-1 mt-9">
                   <p className="font-bold">Current Balance</p>
-                  <p className="text-blue-500 text-2xl font-bold">5 000</p>
+                  <p className="text-blue-500 text-2xl font-bold">
+                    {remainingBalance}
+                  </p>
                   <p>E-Bucks</p>
                 </div>
                 <LayoutPanelLeft className="text-blue-500 mt-16" />
@@ -161,67 +265,7 @@ export default function page() {
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-4">
-              <Table>
-                <TableHeader></TableHeader>
-                <TableBody>
-                  <TableRow className="flex justify-between border-2  border-solid p-2 mb-2 rounded-lg ">
-                    <TableCell className="font-medium ">
-                      <div className="flex space-x-4 ">
-                        <div className="bg-econetBlue p-2 rounded-xl border border-white/10">
-                          <CardSim className="text-white size-6" />
-                        </div>
-                        <div>
-                          <p className="font-bold">80 MB DAILY BUNDLE</p>
-                          <p className="ml-auto">Redeemed at 08:32 24/08/25</p>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <p className="rounded-full border-2 border-red-500 bg-red-100 px-6 py-3 text-red-700">
-                        -200 E-Bucks
-                      </p>
-                    </TableCell>
-                  </TableRow>
-
-                  <TableRow className="flex justify-between border-2  border-solid p-2 mb-2 rounded-lg ">
-                    <TableCell className="font-medium ">
-                      <div className="flex space-x-4 ">
-                        <div className="bg-econetBlue p-2 rounded-xl border border-white/10">
-                          <PhoneCall className="text-white size-6" />
-                        </div>
-                        <div>
-                          <p className="font-bold">Voice Call - 8 Minutes</p>
-                          <p className="ml-auto">Redeemed at 16:44 22/08/25</p>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <p className="rounded-full border-2 border-green-500 bg-green-100 px-6 py-3 text-green-700">
-                        +25 E-Bucks
-                      </p>
-                    </TableCell>
-                  </TableRow>
-
-                  <TableRow className="flex justify-between border-2  border-solid p-2 mb-2 rounded-lg ">
-                    <TableCell className="font-medium ">
-                      <div className="flex space-x-4 ">
-                        <div className="bg-econetBlue p-2 rounded-xl border border-white/10">
-                          <PhoneCall className="text-white size-6" />
-                        </div>
-                        <div>
-                          <p className="font-bold">Voice Call - 12 Minutes</p>
-                          <p className="ml-auto">Redeemed at 17:03 18/08/25</p>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <p className="rounded-full border-2 border-green-500 bg-green-100 px-6 py-3 text-green-700">
-                        +25 E-Bucks
-                      </p>
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
+              <TranTable performanceData={performance} ebucksData={ebucks} />
             </CardContent>
           </Card>
         </div>

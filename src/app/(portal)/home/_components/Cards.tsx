@@ -1,7 +1,6 @@
 import DashboardCard from "@/components/DashboardCard";
 import { Core_Spend, Performance_Rankings } from "@/lib/definitions";
 
-
 interface CardsProps {
   coreSpendData: { coreSpendData: Core_Spend };
   performanceData: { performanceData: Performance_Rankings }[];
@@ -23,10 +22,21 @@ const formatDate = (dateString: string) => {
 };
 
 export default function Cards({ coreSpendData, performanceData }: any) {
+  // console.log("this is inside the Cards --------------------");
+  // console.log("Core Spend Data:", coreSpendData);
+  // console.log("Performance Data:", performanceData);
+  // console.log(performanceData.performanceData.txn_week);
+  // console.log(performanceData.performanceData.weekly_value);
+
+  const cashinData = performanceData.performanceData.filter(
+    (item: any) => item.txn_type === "CASHIN"
+  );
+
   const sortedPerformanceData: Performance_Rankings[] =
     performanceData.performanceData.sort((a: any, b: any) => {
       return new Date(b.txn_week).getTime() - new Date(a.txn_week).getTime();
     });
+  // console.log("Sorted Performance Data:", sortedPerformanceData);
 
   // Find the most recent CASHIN and CASHOUT objects
   const mostRecentCashIn = sortedPerformanceData.find(
@@ -36,30 +46,22 @@ export default function Cards({ coreSpendData, performanceData }: any) {
     (item) => item.txn_type === "CASHOUT"
   );
 
-
   return (
     <div className="flex justify-center gap-4 mb-8">
       <DashboardCard
         title={"Total Daily Data"}
-
         date={formatDate(coreSpendData.coreSpendData.date.toString())}
         value={`${coreSpendData.coreSpendData.total_data_usage || "0"} MB`}
-
       ></DashboardCard>
 
-      {/* <DashboardCard
+      <DashboardCard
         title={"Total Daily SMS"}
-
         date={formatDate(coreSpendData.coreSpendData.date.toString())}
         value={`${coreSpendData.coreSpendData.total_sms_usage || "0"} SMS`}
       ></DashboardCard>
 
-
-
-
-      {/* <DashboardCard
+      <DashboardCard
         title={"Total Daily Voice"}
-
         date={formatDate(coreSpendData.coreSpendData.date.toString())}
         value={`${coreSpendData.coreSpendData.total_voice_usage || "0"} Mins`}
       ></DashboardCard>
@@ -79,9 +81,6 @@ export default function Cards({ coreSpendData, performanceData }: any) {
           value={`${mostRecentCashOut?.weekly_value || "0"} LSL`}
         ></DashboardCard>
       )}
-
-
-
     </div>
   );
 }
