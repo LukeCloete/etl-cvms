@@ -192,82 +192,8 @@ export default async function page({ searchParams }: HomeProps) {
               </CardContent>
             </Card>
           </div>
-
-          {/* Filter Transactions */}
-          <Card className="mb-8">
-            <CardHeader>
-              <CardTitle className="flex space-x-2">
-                <div>
-                  <Funnel />
-                </div>
-                <div>Filter Transactions</div>
-              </CardTitle>
-              <CardDescription className="pl-2">
-                Search through your transactions
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form>
-                <Label htmlFor="search" className="sr-only">
-                  Search
-                </Label>
-                <input
-                  id="search"
-                  placeholder="Search Transactions..."
-                  className="pl-8"
-                />
-              </form>
-              {/* <div>
-                <FormField
-                  control={form.control}
-                  name="category"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel htmlFor="category">Category</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                        name="category"
-                      >
-                        <FormControl>
-                          <SelectTrigger className="bg-transparent border-dashboardBackground mt-3 text-white  rounded-md ">
-                            <SelectValue placeholder="Select a category" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent className="border-dashboardBackground text-white">
-                          <SelectItem value="home-equipment">
-                            Home Equipment
-                          </SelectItem>
-                          <SelectItem value="branding">Branding</SelectItem>
-                          <SelectItem value="gadgets">Gadgets</SelectItem>
-                          <SelectItem value="it-networking">
-                            IT/Networking
-                          </SelectItem>
-                          <SelectItem value="stationery">Stationery</SelectItem>
-                          <SelectItem value="electronics">
-                            Electronics
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div> */}
-            </CardContent>
-          </Card>
           {/* Recent Transactions */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex pl-2">Recent Transactions</CardTitle>
-              <CardDescription className="pl-2">
-                View your transactions
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="flex flex-col gap-4">
-              <TranTable performanceData={performance} ebucksData={ebucks} />
-            </CardContent>
-          </Card>
+          <TranTable performanceData={performance} ebucksData={ebucks} />
         </div>
       </div>
     </div>
