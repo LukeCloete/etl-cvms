@@ -50,20 +50,32 @@ export default function Cards({ coreSpendData, performanceData }: any) {
     <div className="flex justify-center gap-4 mb-8">
       <DashboardCard
         title={"Total Daily Data"}
-        date={formatDate(coreSpendData.coreSpendData.date.toString())}
-        value={`${coreSpendData.coreSpendData.total_data_usage || "0"} MB`}
+        date={
+          coreSpendData?.coreSpendData?.date
+            ? formatDate(coreSpendData.coreSpendData.date.toString())
+            : "0"
+        }
+        value={`${coreSpendData?.coreSpendData?.total_data_usage || "0"} MB`}
       ></DashboardCard>
 
       <DashboardCard
         title={"Total Daily SMS"}
-        date={formatDate(coreSpendData.coreSpendData.date.toString())}
-        value={`${coreSpendData.coreSpendData.total_sms_usage || "0"} SMS`}
+        date={
+          coreSpendData?.coreSpendData?.date
+            ? formatDate(coreSpendData.coreSpendData.date.toString())
+            : "0"
+        }
+        value={`${coreSpendData?.coreSpendData?.total_sms_usage || "0"} SMS`}
       ></DashboardCard>
 
       <DashboardCard
         title={"Total Daily Voice"}
-        date={formatDate(coreSpendData.coreSpendData.date.toString())}
-        value={`${coreSpendData.coreSpendData.total_voice_usage || "0"} Mins`}
+        date={
+          coreSpendData?.coreSpendData?.date
+            ? formatDate(coreSpendData.coreSpendData.date.toString())
+            : "0"
+        }
+        value={`${coreSpendData?.coreSpendData?.total_voice_usage || "0"} Mins`}
       ></DashboardCard>
 
       {mostRecentCashIn && (

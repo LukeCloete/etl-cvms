@@ -22,9 +22,11 @@ export default function NavbarUserContent() {
   const router = useRouter();
 
   useEffect(() => {
-    async function fetchAgent() {
+    async function fetchAgent(msisdn?: string) {
+      setLoading(true);
       try {
-        const response = await fetch("/api/agent/me"); // Client-side fetch automatically includes cookies
+        const url = msisdn ? `/api/agents?msisdn=${msisdn}` : "/api/agent/me";
+        const response = await fetch(url); // Client-side fetch automatically includes cookies
 
         if (!response.ok) {
           throw new Error("Failed to fetch agent data.");
@@ -39,9 +41,9 @@ export default function NavbarUserContent() {
         setLoading(false);
       }
     }
-
-    fetchAgent();
-  }, []);
+    const msisdn = searchParams.get("msisdn");
+    fetchAgent(msisdn || undefined);
+  }, [searchParams]);
 
   const handleMsisdnChange = (newMsisdn: string) => {
     const params = new URLSearchParams(searchParams);

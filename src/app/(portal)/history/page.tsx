@@ -40,7 +40,7 @@ import {
   CardSim,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { getPerformanceData } from "../home/page";
+import { AgentResponse, getPerformanceData } from "../home/page";
 import { getAgentData } from "../home/page";
 import { Agents, Core_Spend, Performance_Rankings } from "@/lib/definitions";
 import {
@@ -102,7 +102,7 @@ export default async function page({ searchParams }: HomeProps) {
   const msisdn = searchParams.msisdn!;
 
   /* When i specify the data to be Performance_Rankings[] instead of any i get errors */
-  const agentData = await getAgentData();
+  const agentData: AgentResponse = await getAgentData(msisdn);
   const performanceData = await getPerformanceData(msisdn);
   const ebucksData = await getEbucksData(msisdn);
 

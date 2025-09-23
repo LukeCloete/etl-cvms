@@ -49,8 +49,8 @@ export async function getPerformanceData(msisdn: string) {
   return res.json();
 }
 
-export async function getAgentData() {
-  const res = await fetch(`http://localhost:3000/api/agent/me`, {
+export async function getAgentData(msisdn: string) {
+  const res = await fetch(`http://localhost:3000/api/agents?msisdn=${msisdn}`, {
     method: "get",
     headers: {
       Cookie: cookies().toString(),
@@ -82,14 +82,14 @@ async function getEbucksLog(msisdn: string) {
   return res.json();
 }
 
-interface AgentResponse {
+export interface AgentResponse {
   agent: Agents;
 }
 
 export default async function page({ searchParams }: HomeProps) {
   const msisdn = searchParams.msisdn!;
 
-  const agentData: AgentResponse = await getAgentData();
+  const agentData: AgentResponse = await getAgentData(msisdn);
   const coreSpendData: Core_Spend = await getCoreSpendData(msisdn);
   const performanceData: Performance_Rankings[] = await getPerformanceData(
     msisdn
@@ -184,7 +184,7 @@ export default async function page({ searchParams }: HomeProps) {
         </div>
 
         <div className="w-1/3 flex flex-col gap-4">
-          <RecentActivity ebucksLog={ebucksLog} />
+          {/* <RecentActivity ebucksLog={ebucksLog} /> */}
 
           <Card>
             <CardHeader>
