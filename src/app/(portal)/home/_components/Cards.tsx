@@ -21,13 +21,13 @@ const formatDate = (dateString: string) => {
   return date.toLocaleDateString("en-US", options);
 };
 
-export default function Cards({ coreSpendData, performanceData }: any) {
-  // console.log("this is inside the Cards --------------------");
-  // console.log("Core Spend Data:", coreSpendData);
-  // console.log("Performance Data:", performanceData);
-  // console.log(performanceData.performanceData.txn_week);
-  // console.log(performanceData.performanceData.weekly_value);
-
+export default function Cards({
+  coreSpendData,
+  performanceData,
+}: {
+  coreSpendData: any;
+  performanceData: any;
+}) {
   const cashinData = performanceData.performanceData.filter(
     (item: any) => item.txn_type === "CASHIN"
   );
@@ -47,52 +47,117 @@ export default function Cards({ coreSpendData, performanceData }: any) {
   );
 
   return (
-    <div className="flex justify-center gap-4 mb-8">
-      <DashboardCard
-        title={"Total Daily Data"}
-        date={
-          coreSpendData?.coreSpendData?.date
-            ? formatDate(coreSpendData.coreSpendData.date.toString())
-            : "0"
-        }
-        value={`${coreSpendData?.coreSpendData?.total_data_usage || "0"} MB`}
-      ></DashboardCard>
-
-      <DashboardCard
-        title={"Total Daily SMS"}
-        date={
-          coreSpendData?.coreSpendData?.date
-            ? formatDate(coreSpendData.coreSpendData.date.toString())
-            : "0"
-        }
-        value={`${coreSpendData?.coreSpendData?.total_sms_usage || "0"} SMS`}
-      ></DashboardCard>
-
-      <DashboardCard
-        title={"Total Daily Voice"}
-        date={
-          coreSpendData?.coreSpendData?.date
-            ? formatDate(coreSpendData.coreSpendData.date.toString())
-            : "0"
-        }
-        value={`${coreSpendData?.coreSpendData?.total_voice_usage || "0"} Mins`}
-      ></DashboardCard>
-
-      {mostRecentCashIn && (
+    <div className="flex flex-col">
+      {/* ROW OF CARDS OF MISC DATA */}
+      <div className="flex justify-center gap-4 mb-8">
         <DashboardCard
-          title={"Weekly Cash-In"}
-          date={formatDate(mostRecentCashIn.txn_week.toString())}
-          value={`${mostRecentCashIn?.weekly_value || "0"} LSL`}
+          title={"Total Daily Data"}
+          date={
+            coreSpendData?.coreSpendData?.date
+              ? formatDate(coreSpendData.coreSpendData.date.toString())
+              : "0"
+          }
+          value={`${coreSpendData?.coreSpendData?.total_data_usage || "0"} MB`}
         ></DashboardCard>
-      )}
 
-      {mostRecentCashOut && (
         <DashboardCard
-          title={"Weekly Cash-Out"}
-          date={formatDate(mostRecentCashOut.txn_week.toString())}
-          value={`${mostRecentCashOut?.weekly_value || "0"} LSL`}
+          title={"Total Daily SMS"}
+          date={
+            coreSpendData?.coreSpendData?.date
+              ? formatDate(coreSpendData.coreSpendData.date.toString())
+              : "0"
+          }
+          value={`${coreSpendData?.coreSpendData?.total_sms_usage || "0"} SMS`}
         ></DashboardCard>
-      )}
+
+        <DashboardCard
+          title={"Total Daily Voice"}
+          date={
+            coreSpendData?.coreSpendData?.date
+              ? formatDate(coreSpendData.coreSpendData.date.toString())
+              : "0"
+          }
+          value={`${
+            coreSpendData?.coreSpendData?.total_voice_usage || "0"
+          } Mins`}
+        ></DashboardCard>
+
+        <DashboardCard
+          title={"Total Daily Voice"}
+          date={
+            coreSpendData?.coreSpendData?.date
+              ? formatDate(coreSpendData.coreSpendData.date.toString())
+              : "0"
+          }
+          value={`${
+            coreSpendData?.coreSpendData?.total_voice_usage || "0"
+          } Mins`}
+        ></DashboardCard>
+
+        {mostRecentCashIn && (
+          <DashboardCard
+            title={"Weekly Transactions"}
+            date={formatDate(mostRecentCashIn.txn_week.toString())}
+            value={`${mostRecentCashIn?.weekly_value || "0"} LSL`}
+          ></DashboardCard>
+        )}
+        {mostRecentCashIn && (
+          <DashboardCard
+            title={"Transaction Growth pct"}
+            date={formatDate(mostRecentCashIn.txn_week.toString())}
+            value={`${mostRecentCashIn?.txn_growth_pct || "0"} %`}
+          ></DashboardCard>
+        )}
+      </div>
+      {/* ROW OF CARDS FOR CASH IN */}
+      <div className="flex justify-center gap-4 mb-8">
+        {mostRecentCashIn && (
+          <DashboardCard
+            title={"Weekly Cash-In"}
+            date={formatDate(mostRecentCashIn.txn_week.toString())}
+            value={`${mostRecentCashIn?.weekly_value || "0"} LSL`}
+          ></DashboardCard>
+        )}
+
+        {mostRecentCashIn && (
+          <DashboardCard
+            title={"Cash-In Value Growth pct"}
+            date={formatDate(mostRecentCashIn.txn_week.toString())}
+            value={`${mostRecentCashIn?.value_growth_pct || "0"} %`}
+          ></DashboardCard>
+        )}
+        {mostRecentCashIn && (
+          <DashboardCard
+            title={"Previous Weekly Cash-In"}
+            date={formatDate(mostRecentCashIn.txn_week.toString())}
+            value={`${mostRecentCashIn?.prev_weekly_value || "0"} LSL`}
+          ></DashboardCard>
+        )}
+      </div>
+      {/* CASH OUT CARDS */}
+      <div className="flex justify-center gap-4 mb-8">
+        {mostRecentCashOut && (
+          <DashboardCard
+            title={"Weekly Cash-Out"}
+            date={formatDate(mostRecentCashOut.txn_week.toString())}
+            value={`${mostRecentCashOut?.weekly_value || "0"} LSL`}
+          ></DashboardCard>
+        )}
+        {mostRecentCashOut && (
+          <DashboardCard
+            title={"Cash-Out Value Growth pct"}
+            date={formatDate(mostRecentCashOut.txn_week.toString())}
+            value={`${mostRecentCashOut?.value_growth_pct || "0"} %`}
+          ></DashboardCard>
+        )}
+        {mostRecentCashOut && (
+          <DashboardCard
+            title={"Previous Weekly Cash-Out"}
+            date={formatDate(mostRecentCashOut.txn_week.toString())}
+            value={`${mostRecentCashOut?.prev_weekly_value || "0"} LSL`}
+          ></DashboardCard>
+        )}
+      </div>
     </div>
   );
 }

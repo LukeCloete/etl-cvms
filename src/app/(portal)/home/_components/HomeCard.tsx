@@ -9,16 +9,18 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Msisdns } from "@/lib/definitions";
+import { Msisdns, Performance_Rankings } from "@/lib/definitions";
 import clsx from "clsx";
 import { useCallback, useEffect, useState } from "react";
 
 export default function HomeCard({
   msisdn,
   eBucksTiers,
+  performanceData,
 }: {
   msisdn: Msisdns;
   eBucksTiers: Array<any>;
+  performanceData: Performance_Rankings[];
 }) {
   const [progress, setProgress] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -42,6 +44,8 @@ export default function HomeCard({
   }, [eBucksBalanceInPercentage]);
 
   console.log("ebucks to next tier", eBucksToNextTier);
+  console.log("This is the HomeCard component");
+  console.log("Performance:", performanceData);
 
   return (
     <Card className=" bg-econetBlue text-econetWhite">

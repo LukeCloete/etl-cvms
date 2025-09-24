@@ -75,29 +75,6 @@ async function getEbucksData(msisdn: string) {
 }
 
 export default async function page({ searchParams }: HomeProps) {
-  // const [sorting, setSorting] = useState([]);
-  // const [columnFilters, setColumnFilters] = useState([]);
-  // const [columnVisibility, setColumnVisibility] = useState({});
-  // const [rowSelection, setRowSelection] = useState({});
-
-  // const table = useReactTable({
-  //   data,
-  //   columns,
-  //   getCoreRowModel: getCoreRowModel(),
-  //   getPaginationRowModel: getPaginationRowModel(),
-  //   onSortingChange: setSorting,
-  //   onColumnFiltersChange: setColumnFilters,
-  //   getFilteredRowModel: getFilteredRowModel(),
-  //   onColumnVisibilityChange: setColumnVisibility,
-  //   getSortedRowModel: getSortedRowModel(),
-  //   onRowSelectionChange: setRowSelection,
-  //   state: {
-  //     sorting,
-  //     columnFilters,
-  //     columnVisibility,
-  //     rowSelection,
-  //   },
-  // });
   console.log("This is in the history page");
   const msisdn = searchParams.msisdn!;
 
@@ -117,26 +94,11 @@ export default async function page({ searchParams }: HomeProps) {
   );
   const currentEbucksBalance = activeMsisddn?.current_ebucks_balance || 0;
 
-  const totalRedeemed = 1000;
+  const totalRedeemed = 0;
   const remainingBalance = currentEbucksBalance - totalRedeemed;
 
-  // console.log("This is the performance: ", performance);
-
-  const cashInData = performance.performanceData.filter(
-    (item: any) => item.txn_type === "CASHIN"
-  );
-  const cashOutData = performance.performanceData.filter(
-    (item: any) => item.txn_type === "CASHOUT"
-  );
-  // console.log("Cash-In Data:", cashInData);
-  // console.log("This is cashInData: ", cashInData);
-  // console.log(cashInData.txn_week);
-  /* Gather  */
-  // console.log("-------------");
-  // console.log(ebucks);
-
-  // console.log("NEW LINE NEW LINE NEW LINE");
-  // console.log(performance);
+  // console.log("performance data passed to TranTable:", performance);
+  // console.log("ebucks data passed to TranTable:", ebucks);
 
   return (
     <div>

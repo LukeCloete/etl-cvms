@@ -90,7 +90,7 @@ export default function TranTable({ performanceData, ebucksData }: any) {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form className="flex items-center gap-2 justify-end">
+          <form className="flex items-center gap-2 ">
             <Label htmlFor="search" className="sr-only">
               Search
             </Label>
@@ -103,7 +103,10 @@ export default function TranTable({ performanceData, ebucksData }: any) {
             />
             <button
               type="button"
-              onClick={() => setActiveFilter("all")}
+              onClick={(e) => {
+                e.preventDefault();
+                setActiveFilter("all");
+              }}
               className={
                 activeFilter === "all"
                   ? "bg-blue-500 text-white"
@@ -114,7 +117,10 @@ export default function TranTable({ performanceData, ebucksData }: any) {
             </button>
             <button
               type="button"
-              onClick={() => setActiveFilter("cashin")}
+              onClick={(e) => {
+                e.preventDefault();
+                setActiveFilter("cashin");
+              }}
               className={
                 activeFilter === "cashin"
                   ? "bg-blue-500 text-white"
@@ -125,7 +131,10 @@ export default function TranTable({ performanceData, ebucksData }: any) {
             </button>
             <button
               type="button"
-              onClick={() => setActiveFilter("cashout")}
+              onClick={(e) => {
+                e.preventDefault();
+                setActiveFilter("cashout");
+              }}
               className={
                 activeFilter === "cashout"
                   ? "bg-blue-500 text-white"
@@ -236,7 +245,8 @@ export default function TranTable({ performanceData, ebucksData }: any) {
                             </p>
                           </div>
                           <p className="ml-auto">
-                            Transacted at {formattedTime} on {formattedDate}
+                            Transaction took place at {formattedTime} on{" "}
+                            {formattedDate}
                           </p>
                         </div>
                       </div>

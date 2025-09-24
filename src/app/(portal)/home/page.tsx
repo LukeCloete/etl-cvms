@@ -115,13 +115,16 @@ export default async function page({ searchParams }: HomeProps) {
   const currentEbucksBalance = activeMsisddn?.current_ebucks_balance || 0;
   const currentPerformanceScore = activeMsisddn?.current_performance_score || 0;
 
-  console.log("currentEbucksBalance:", currentEbucksBalance);
-  console.log("currentPerformanceScore:", currentPerformanceScore);
+  // console.log("currentEbucksBalance:", currentEbucksBalance);
+  // console.log("currentPerformanceScore:", currentPerformanceScore);
+  // console.log("peformance data:", performance);
+  // const performanceScore: number = performance[0]?.performance_score;
+  // console.log("performance Score: ", performanceScore);
 
   return (
     <div>
-      <div className="flex p-8 gap-8">
-        <div className="w-2/3 flex flex-col gap-8">
+      <div className="flex p-8 gap-8 ">
+        <div className="w-full flex flex-col gap-8">
           <p className="text-econetBlue text-3xl font-bold">
             Welcome {agent.agent.name || "Agent"}
           </p>
@@ -129,11 +132,12 @@ export default async function page({ searchParams }: HomeProps) {
           <HomeCard
             msisdn={activeMsisddn!}
             eBucksTiers={ebucksTiers.ebucks_tiers || []}
+            performanceData={performance}
           />
 
           <Cards coreSpendData={coreSpend} performanceData={performance} />
 
-          <Card className="mb-8">
+          {/* <Card className="mb-8">
             <CardHeader>
               <CardTitle className="flex">Quick Actions</CardTitle>
               <CardDescription>
@@ -154,9 +158,9 @@ export default async function page({ searchParams }: HomeProps) {
                 </p>
               </div>
             </CardContent>
-          </Card>
+          </Card> */}
 
-          <Card>
+          {/* <Card>
             <CardHeader>
               <CardTitle>Popular Rewards</CardTitle>
               <CardDescription>
@@ -180,13 +184,14 @@ export default async function page({ searchParams }: HomeProps) {
                 </CardContent>
               </Card>
             </CardContent>
-          </Card>
+          </Card> */}
         </div>
 
-        <div className="w-1/3 flex flex-col gap-4">
-          {/* <RecentActivity ebucksLog={ebucksLog} /> */}
+        {/* <div className="w-1/3 flex flex-col gap-4"> */}
+        {/* <RecentActivity ebucksLog={ebucksLog} /> */}
 
-          <Card>
+        {/* Earning tips card  */}
+        {/* <Card>
             <CardHeader>
               <CardTitle className="flex space-x-2 text-green-600">
                 <div>
@@ -201,8 +206,8 @@ export default async function page({ searchParams }: HomeProps) {
               <p>- Refer friends for 100 E-Bucks each</p>
               <p>- Complete monthly challenges</p>
             </CardContent>
-          </Card>
-        </div>
+          </Card> */}
+        {/* </div> */}
       </div>
     </div>
   );
