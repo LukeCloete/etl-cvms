@@ -3,7 +3,7 @@ import { Core_Spend, Performance_Rankings } from "@/lib/definitions";
 
 interface CardsProps {
   coreSpendData: { coreSpendData: Core_Spend };
-  performanceData: { performanceData: Performance_Rankings }[];
+  performanceData: { performanceData: Performance_Rankings[] };
 }
 
 const formatDate = (dateString: string) => {
@@ -21,19 +21,9 @@ const formatDate = (dateString: string) => {
   return date.toLocaleDateString("en-US", options);
 };
 
-export default function Cards({
-  coreSpendData,
-  performanceData,
-}: {
-  coreSpendData: any;
-  performanceData: any;
-}) {
-  // const cashinData = performanceData.performanceData.filter(
-  //   (item: any) => item.txn_type === "CASHIN"
-  // );
-
+export default function Cards({ coreSpendData, performanceData }: CardsProps) {
   const sortedPerformanceData: Performance_Rankings[] =
-    performanceData.performanceData.sort((a: any, b: any) => {
+    performanceData.performanceData.sort((a, b) => {
       return new Date(b.txn_week).getTime() - new Date(a.txn_week).getTime();
     });
   // console.log("Sorted Performance Data:", sortedPerformanceData);

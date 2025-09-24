@@ -1,7 +1,12 @@
 import { cookies } from "next/headers";
-import axios from "axios";
+import axios, { Method } from "axios";
 
-const axiosInstance = async ({ url, method }: any) => {
+interface AxiosInstanceProps {
+  url: string;
+  method: Method;
+}
+
+const axiosInstance = async ({ url, method }: AxiosInstanceProps) => {
   const sessionCookie = cookies().get("session");
   const headers = {
     Cookie: `session=${sessionCookie?.value}`,

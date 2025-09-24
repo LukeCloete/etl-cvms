@@ -76,8 +76,10 @@ export default async function page({ searchParams }: HomeProps) {
   const msisdn = searchParams.msisdn!;
 
   const agentData: AgentResponse = await getAgentData(msisdn);
-  const coreSpendData: Core_Spend = await getCoreSpendData(msisdn);
-  const performanceData: Performance_Rankings[] = await getPerformanceData(
+  const coreSpendData: { coreSpendData: Core_Spend } = await getCoreSpendData(
+    msisdn
+  );
+  const performanceData: { performanceData: Performance_Rankings[] } = await getPerformanceData(
     msisdn
   );
   const ebucksTiersData = await getEbucksTiers();

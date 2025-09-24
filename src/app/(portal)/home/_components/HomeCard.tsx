@@ -9,17 +9,16 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Msisdns } from "@/lib/definitions";
+import { Msisdns, Ebucks_Tiers } from "@/lib/definitions";
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 
-export default function HomeCard({
-  msisdn,
-  eBucksTiers,
-}: {
+interface HomeCardProps {
   msisdn: Msisdns;
-  eBucksTiers: Array<any>;
-}) {
+  eBucksTiers: Ebucks_Tiers[];
+}
+
+export default function HomeCard({ msisdn, eBucksTiers }: HomeCardProps) {
   const [progress, setProgress] = useState(0);
   // const [loading, setLoading] = useState(true);
 

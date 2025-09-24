@@ -9,7 +9,7 @@ interface AuthUser {
   sessionCookie: RequestCookie | undefined;
   user: Models.User<Models.Preferences> | null;
   getUser: () => Promise<Models.User<Models.Preferences> | null>;
-  createSession: (formData: any) => Promise<never>;
+  createSession: (formData: FormData) => Promise<never>;
   deleteSession: () => Promise<never>;
 }
 
@@ -40,8 +40,8 @@ const auth: AuthUser = {
     const { account } = await createAdminClient();
 
     const session = await account.createEmailPasswordSession({
-      email,
-      password,
+      email: email as string,
+      password: password as string,
     });
 
     cookies().set("session", session.secret, {
@@ -61,7 +61,9 @@ const auth: AuthUser = {
     try {
       const { account } = await createSessionClient(auth.sessionCookie?.value);
       await account.deleteSession({ sessionId: "current" });
-    } catch (error) {}
+    } catch (error) {
+      console.error("Failed to delete session on server:", error);
+    }
 
     cookies().delete("session");
     auth.user = null;

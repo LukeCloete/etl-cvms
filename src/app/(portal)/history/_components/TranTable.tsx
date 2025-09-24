@@ -18,7 +18,7 @@ import { Mail } from "lucide-react";
 import { Funnel, CardSim, PhoneCall } from "lucide-react";
 import { BanknoteArrowUp } from "lucide-react";
 import { BanknoteArrowDown } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Performance_Rankings, Ebucks_log } from "@/lib/definitions";
 
 type TranTableProps = {
@@ -40,27 +40,28 @@ export default function TranTable({
   >([]);
   const [activeFilter, setActiveFilter] = useState("all"); // 'all' or 'cashin'
 
-  const performanceArray = performanceData.performanceData;
-  const ebucksArray = ebucksData.ebucksData;
+  const combinedData = useMemo(() => {
+    const performanceArray = performanceData.performanceData;
+    const ebucksArray = ebucksData.ebucksData;
 
-  // Combine both arrays into a single transactions array.
-  const combinedData: (Performance_Rankings | Ebucks_log)[] = [
-    ...performanceArray,
-    ...ebucksArray,
-  ];
+    // Combine both arrays into a single transactions array.
+    const combined = [...performanceArray, ...ebucksArray];
 
-  // Sort the combined data chronologically by a date property.
-  // Using `$createdAt` as it seems to be available in both data structures.
-  combinedData.sort((a, b) => {
-    const dateA = new Date(
-      (a as Performance_Rankings).txn_week || (a as Ebucks_log).$createdAt
-    ).getTime();
-    const dateB = new Date(
-      (b as Performance_Rankings).txn_week || (b as Ebucks_log).$createdAt
-    ).getTime();
-    // Sort from newest to oldest
-    return dateB - dateA;
-  });
+    // Sort the combined data chronologically by a date property.
+    // Using `$createdAt` as it seems to be available in both data structures.
+    combined.sort((a, b) => {
+      const dateA = new Date(
+        (a as Performance_Rankings).txn_week || (a as Ebucks_log).$createdAt
+      ).getTime();
+      const dateB = new Date(
+        (b as Performance_Rankings).txn_week || (b as Ebucks_log).$createdAt
+      ).getTime();
+      // Sort from newest to oldest
+      return dateB - dateA;
+    });
+
+    return combined;
+  }, [performanceData, ebucksData]);
 
   // Use useEffect to update the filtered data whenever the search query changes
   useEffect(() => {

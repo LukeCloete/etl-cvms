@@ -72,7 +72,7 @@ export default function RewardRowCard() {
               : "text-gray-800"
           }`}
         >
-          Ts'oara Bohle Hohle Calling
+          Ts&apos;oara Bohle Hohle Calling
         </button>
       </div>
       <div className="flex flex-col gap-8 ">

@@ -10,25 +10,24 @@ import { Badge } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Landmark } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Msisdns } from "@/lib/definitions";
+import { Msisdns, Ebucks_Tiers } from "@/lib/definitions";
 import clsx from "clsx";
+
+interface RewardProfileCardProps {
+  eBucksBalance: string;
+  eBucksTiers: Ebucks_Tiers[];
+  msisdn: Msisdns;
+}
+
 export default function RewardProfileCard({
   eBucksBalance,
   eBucksTiers,
   msisdn,
-}: {
-  eBucksBalance: string;
-  eBucksTiers: Array<any>;
-  msisdn: Msisdns;
-}) {
+}: RewardProfileCardProps) {
   const [progress, setProgress] = useState(0);
   const eBucksToNextTier = eBucksTiers.find(
     (tier) => tier.min_balance_req > msisdn.current_ebucks_balance
   );
-
-  // const highestAchievedTier = [...eBucksTiers]
-  //   .sort((a, b) => b.min_balance_req - a.min_balance_req)
-  //   .find((tier) => msisdn.current_ebucks_balance >= tier.min_balance_req);
 
   const eBucksBalanceInPercentage = eBucksToNextTier
     ? (msisdn.current_ebucks_balance / eBucksToNextTier.min_balance_req) * 100

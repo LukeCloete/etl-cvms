@@ -59,3 +59,11 @@ export interface Ebucks_log {
   $createdAt: Date;
   $updatedAt: Date;
 }
+
+export interface Ebucks_Tiers {
+  $id: string;
+  tier_name: "bronze" | "silver" | "gold" | "platinum";
+  min_balance_req: number;
+  $createdAt: Date;
+  $updatedAt: Date;
+}
