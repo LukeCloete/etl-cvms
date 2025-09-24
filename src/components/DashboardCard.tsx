@@ -19,7 +19,7 @@ export default function DashboardCard({
       <CardHeader>
         <CardTitle className="text-lg">{title}</CardTitle>
         <CardDescription className="text-xs ">
-          Last updated as of: {date}
+          Last updated as of {date}
         </CardDescription>
       </CardHeader>
 

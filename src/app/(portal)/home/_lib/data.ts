@@ -8,7 +8,7 @@ export async function getData() {
   const sessionCookie = cookies().get("session");
   try {
     const { tablesDB } = await createSessionClient(sessionCookie?.value);
-    const { rows: agents, total } = await tablesDB.listRows({
+    const { rows: agents } = await tablesDB.listRows({
       databaseId: process.env.APPWRITE_DATABASE_ID!,
       tableId: process.env.APPWRITE_TABLE_CORE_SPEND!,
     });

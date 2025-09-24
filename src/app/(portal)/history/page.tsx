@@ -1,60 +1,7 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { PhoneCall } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Label } from "@/components/ui/label";
-import {
-  Bell,
-  LayoutPanelLeft,
-  Funnel,
-  TrendingUp,
-  TrendingDown,
-  CardSim,
-} from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Card, CardContent } from "@/components/ui/card";
+import { LayoutPanelLeft, TrendingUp, TrendingDown } from "lucide-react";
 import { AgentResponse, getPerformanceData } from "../home/page";
 import { getAgentData } from "../home/page";
-import { Agents, Core_Spend, Performance_Rankings } from "@/lib/definitions";
-import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  flexRender,
-  VisibilityState,
-  getCoreRowModel,
-  getPaginationRowModel,
-  getFilteredRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
 import { cookies } from "next/headers";
 import TranTable from "./_components/TranTable";
 
@@ -63,6 +10,13 @@ interface HomeProps {
     msisdn?: string;
   };
 }
+// // Define the structure of the object
+// interface MsisdnData {
+//   msisdn: number;
+//   current_ebucks_balance: number;
+//   current_performance_score: number;
+//   // Add other properties that are part of the object
+// }
 
 async function getEbucksData(msisdn: string) {
   const res = await fetch(`http://localhost:3000/api/ebucks?msisdn=${msisdn}`, {
@@ -90,7 +44,7 @@ export default async function page({ searchParams }: HomeProps) {
   ]);
 
   const activeMsisddn = agent.agent.msisdns.find(
-    (m: any) => m.msisdn === parseInt(msisdn)
+    (m) => m.msisdn === parseInt(msisdn)
   );
   const currentEbucksBalance = activeMsisddn?.current_ebucks_balance || 0;
 

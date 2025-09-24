@@ -2,7 +2,6 @@
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHeader,
   TableRow,
@@ -12,47 +11,60 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { Mail } from "lucide-react";
-import {
-  Bell,
-  LayoutPanelLeft,
-  Funnel,
-  TrendingUp,
-  TrendingDown,
-  CardSim,
-  PhoneCall,
-} from "lucide-react";
+import { Funnel, CardSim, PhoneCall } from "lucide-react";
 import { BanknoteArrowUp } from "lucide-react";
 import { BanknoteArrowDown } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Performance_Rankings, Ebucks_log } from "@/lib/definitions";
 
-export default function TranTable({ performanceData, ebucksData }: any) {
+type TranTableProps = {
+  performanceData: {
+    performanceData: Performance_Rankings[];
+  };
+  ebucksData: {
+    ebucksData: Ebucks_log[];
+  };
+};
+
+export default function TranTable({
+  performanceData,
+  ebucksData,
+}: TranTableProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredData, setFilteredData] = useState<any[]>([]);
+  const [filteredData, setFilteredData] = useState<
+    (Performance_Rankings | Ebucks_log)[]
+  >([]);
   const [activeFilter, setActiveFilter] = useState("all"); // 'all' or 'cashin'
 
   const performanceArray = performanceData.performanceData;
   const ebucksArray = ebucksData.ebucksData;
 
   // Combine both arrays into a single transactions array.
-  const combinedData = [...performanceArray, ...ebucksArray];
+  const combinedData: (Performance_Rankings | Ebucks_log)[] = [
+    ...performanceArray,
+    ...ebucksArray,
+  ];
 
   // Sort the combined data chronologically by a date property.
   // Using `$createdAt` as it seems to be available in both data structures.
   combinedData.sort((a, b) => {
-    const dateA = new Date(a.txn_week || a.$createdAt).getTime();
-    const dateB = new Date(b.txn_week || b.$createdAt).getTime();
+    const dateA = new Date(
+      (a as Performance_Rankings).txn_week || (a as Ebucks_log).$createdAt
+    ).getTime();
+    const dateB = new Date(
+      (b as Performance_Rankings).txn_week || (b as Ebucks_log).$createdAt
+    ).getTime();
     // Sort from newest to oldest
     return dateB - dateA;
   });
 
   // Use useEffect to update the filtered data whenever the search query changes
   useEffect(() => {
-    const results = combinedData.filter((element: any) => {
+    const results = combinedData.filter((element) => {
       // Check for the search query
       const matchesSearch = JSON.stringify(element)
         .toLowerCase()
@@ -62,10 +74,12 @@ export default function TranTable({ performanceData, ebucksData }: any) {
       let matchesFilter = true; // Start by assuming a match
 
       if (activeFilter === "cashin") {
-        matchesFilter = element.txn_type === "CASHIN";
+        matchesFilter =
+          "txn_type" in element && element.txn_type === "CASHIN";
       } else if (activeFilter === "cashout") {
         // The opposite of CASHIN is considered a cash-out
-        matchesFilter = element.txn_type !== "CASHIN";
+        matchesFilter =
+          "txn_type" in element && element.txn_type !== "CASHIN";
       }
       // If activeFilter is "all", matchesFilter remains true
 
@@ -157,8 +171,10 @@ export default function TranTable({ performanceData, ebucksData }: any) {
           <Table>
             <TableHeader></TableHeader>
             <TableBody>
-              {filteredData.map((element: any) => {
-                const isPerformanceData = "txn_type" in element;
+              {filteredData.map((element) => {
+                const isPerformanceData =
+                  "txn_type" in element &&
+                  (element as Performance_Rankings).txn_type !== undefined;
                 let txnType = "";
                 let value = 0;
                 let isCashIn = false;
@@ -166,9 +182,10 @@ export default function TranTable({ performanceData, ebucksData }: any) {
                 let currency = "";
 
                 if (isPerformanceData) {
-                  isCashIn = element.txn_type === "CASHIN";
-                  txnType = element.txn_type;
-                  value = Math.abs(element.weekly_value);
+                  const performanceElement = element as Performance_Rankings;
+                  isCashIn = performanceElement.txn_type === "CASHIN";
+                  txnType = performanceElement.txn_type;
+                  value = Math.abs(performanceElement.weekly_value);
                   icon = isCashIn ? (
                     <BanknoteArrowUp className="text-white size-6" />
                   ) : (
@@ -176,18 +193,19 @@ export default function TranTable({ performanceData, ebucksData }: any) {
                   );
                   currency = "LSL";
                 } else {
+                  const ebucksElement = element as Ebucks_log;
                   // This is ebucksData
-                  isCashIn = element.points_change > 0;
-                  txnType = element.usage_type;
-                  value = Math.abs(element.points_change);
+                  isCashIn = ebucksElement.points_change > 0;
+                  txnType = ebucksElement.usage_type;
+                  value = Math.abs(ebucksElement.points_change);
                   currency = "E-Bucks";
 
                   // New conditional checks for specific usage types
-                  if (element.usage_type === "SMS") {
+                  if (ebucksElement.usage_type === "SMS") {
                     icon = <Mail className="text-white size-6" />;
-                  } else if (element.usage_type === "VOICE") {
+                  } else if (ebucksElement.usage_type === "VOICE") {
                     icon = <PhoneCall className="text-white size-6" />;
-                  } else if (element.usage_type === "DATA") {
+                  } else if (ebucksElement.usage_type === "DATA") {
                     icon = <CardSim className="text-white size-6" />;
                   } else {
                     icon = isCashIn ? (
@@ -198,13 +216,13 @@ export default function TranTable({ performanceData, ebucksData }: any) {
                   }
                 }
 
-                const ebucksClass = isCashIn
-                  ? "rounded-full border-2 border-green-500 bg-green-100 px-6 py-3 text-green-700"
-                  : "rounded-full border-2 border-red-500 bg-red-100 px-6 py-3 text-red-700";
+                // const ebucksClass = isCashIn
+                //   ? "rounded-full border-2 border-green-500 bg-green-100 px-6 py-3 text-green-700"
+                //   : "rounded-full border-2 border-red-500 bg-red-100 px-6 py-3 text-red-700";
 
                 const transactionDateString = isPerformanceData
-                  ? element.txn_week
-                  : element.date;
+                  ? (element as Performance_Rankings).txn_week
+                  : (element as Ebucks_log).date;
                 const transactionDate = new Date(transactionDateString);
 
                 const formattedDate = transactionDate.toLocaleDateString(

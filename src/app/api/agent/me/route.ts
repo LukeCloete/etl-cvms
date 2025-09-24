@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { createSessionClient } from "@/appwrite/config";
 import { Query } from "node-appwrite";
-import { getUser } from "@/lib/actions";
 
 export async function GET(req: NextRequest) {
   const sessionCookie = cookies().get("session");

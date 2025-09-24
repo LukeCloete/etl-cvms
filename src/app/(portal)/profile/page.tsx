@@ -3,11 +3,10 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Bell, Shield, Calendar, Phone, User } from "lucide-react";
+import { Bell, Shield, User } from "lucide-react";
 
 export default function page() {
   return (

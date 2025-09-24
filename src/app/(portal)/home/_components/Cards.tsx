@@ -28,9 +28,9 @@ export default function Cards({
   coreSpendData: any;
   performanceData: any;
 }) {
-  const cashinData = performanceData.performanceData.filter(
-    (item: any) => item.txn_type === "CASHIN"
-  );
+  // const cashinData = performanceData.performanceData.filter(
+  //   (item: any) => item.txn_type === "CASHIN"
+  // );
 
   const sortedPerformanceData: Performance_Rankings[] =
     performanceData.performanceData.sort((a: any, b: any) => {

@@ -1,21 +1,7 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import DashboardCard from "@/components/DashboardCard";
-import { History, Gift, CardSim, Lightbulb } from "lucide-react";
-
-import axiosInstance from "@/lib/axiosInstance";
 import { Agents, Core_Spend, Performance_Rankings } from "@/lib/definitions";
-import { redirect } from "next/navigation";
 import Cards from "./_components/Cards";
 import { cookies } from "next/headers";
 import HomeCard from "./_components/HomeCard";
-import RecentActivity from "./_components/RecentActivity";
 
 export interface HomeProps {
   searchParams: {
@@ -59,7 +45,7 @@ export async function getAgentData(msisdn: string) {
   return res.json();
 }
 
-async function getEbucksTiers() {
+export async function getEbucksTiers() {
   const res = await fetch(`http://localhost:3000/api/ebucks_tiers`, {
     method: "get",
     headers: {
@@ -69,18 +55,18 @@ async function getEbucksTiers() {
   return res.json();
 }
 
-async function getEbucksLog(msisdn: string) {
-  const res = await fetch(
-    `http://localhost:3000/api/ebucks_log?msisdn=${msisdn}`,
-    {
-      method: "get",
-      headers: {
-        Cookie: cookies().toString(),
-      },
-    }
-  );
-  return res.json();
-}
+// async function getEbucksLog(msisdn: string) {
+//   const res = await fetch(
+//     `http://localhost:3000/api/ebucks_log?msisdn=${msisdn}`,
+//     {
+//       method: "get",
+//       headers: {
+//         Cookie: cookies().toString(),
+//       },
+//     }
+//   );
+//   return res.json();
+// }
 
 export interface AgentResponse {
   agent: Agents;
@@ -95,16 +81,14 @@ export default async function page({ searchParams }: HomeProps) {
     msisdn
   );
   const ebucksTiersData = await getEbucksTiers();
-  const ebucksLogData = await getEbucksLog(msisdn);
+  // const ebucksLogData = await getEbucksLog(msisdn);
 
-  const [agent, coreSpend, performance, ebucksTiers, ebucksLog] =
-    await Promise.all([
-      agentData,
-      coreSpendData,
-      performanceData,
-      ebucksTiersData,
-      ebucksLogData,
-    ]);
+  const [agent, coreSpend, performance, ebucksTiers] = await Promise.all([
+    agentData,
+    coreSpendData,
+    performanceData,
+    ebucksTiersData,
+  ]);
 
   console.log(agent);
 
@@ -112,14 +96,8 @@ export default async function page({ searchParams }: HomeProps) {
     (m) => m.msisdn === parseInt(msisdn)
   );
 
-  const currentEbucksBalance = activeMsisddn?.current_ebucks_balance || 0;
-  const currentPerformanceScore = activeMsisddn?.current_performance_score || 0;
-
-  // console.log("currentEbucksBalance:", currentEbucksBalance);
-  // console.log("currentPerformanceScore:", currentPerformanceScore);
-  // console.log("peformance data:", performance);
-  // const performanceScore: number = performance[0]?.performance_score;
-  // console.log("performance Score: ", performanceScore);
+  // const currentEbucksBalance = activeMsisddn?.current_ebucks_balance || 0;
+  // const currentPerformanceScore = activeMsisddn?.current_performance_score || 0;
 
   return (
     <div>
@@ -132,7 +110,6 @@ export default async function page({ searchParams }: HomeProps) {
           <HomeCard
             msisdn={activeMsisddn!}
             eBucksTiers={ebucksTiers.ebucks_tiers || []}
-            performanceData={performance}
           />
 
           <Cards coreSpendData={coreSpend} performanceData={performance} />

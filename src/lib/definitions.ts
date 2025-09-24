@@ -53,7 +53,7 @@ export interface Performance_Rankings {
 export interface Ebucks_log {
   $id: string;
   date: Date;
-  usage_type: any;
+  usage_type: "SMS" | "VOICE" | "DATA" | "CASHIN" | "CASHOUT";
   points_change: number;
   msisdn: Msisdns[];
   $createdAt: Date;
