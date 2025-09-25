@@ -75,12 +75,10 @@ export default function TranTable({
       let matchesFilter = true; // Start by assuming a match
 
       if (activeFilter === "cashin") {
-        matchesFilter =
-          "txn_type" in element && element.txn_type === "CASHIN";
+        matchesFilter = "txn_type" in element && element.txn_type === "CASHIN";
       } else if (activeFilter === "cashout") {
         // The opposite of CASHIN is considered a cash-out
-        matchesFilter =
-          "txn_type" in element && element.txn_type !== "CASHIN";
+        matchesFilter = "txn_type" in element && element.txn_type !== "CASHIN";
       }
       // If activeFilter is "all", matchesFilter remains true
 
@@ -100,19 +98,19 @@ export default function TranTable({
             </div>
             <div>Filter Transactions</div>
           </CardTitle>
-          <CardDescription className="pl-2">
+          <CardDescription className="pl-2 ">
             Search through your transactions
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form className="flex items-center gap-2 ">
-            <Label htmlFor="search" className="sr-only">
+          <form className="flex items-center gap-2 w-full ">
+            <Label htmlFor="search" className="sr-only  ">
               Search
             </Label>
             <input
               id="search"
               placeholder="Search Transactions..."
-              className="pl-8"
+              className="pl-8 w-full border border-gray-300 rounded-lg py-2 "
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -122,11 +120,11 @@ export default function TranTable({
                 e.preventDefault();
                 setActiveFilter("all");
               }}
-              className={
+              className={`font-bold py-2 px-6 transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 whitespace-nowrap ${
                 activeFilter === "all"
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200"
-              }
+                  ? "bg-econetBlue text-white rounded-full shadow-lg"
+                  : "text-gray-800"
+              }`}
             >
               All
             </button>
@@ -136,11 +134,11 @@ export default function TranTable({
                 e.preventDefault();
                 setActiveFilter("cashin");
               }}
-              className={
+              className={`font-bold py-2 px-6 transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 whitespace-nowrap ${
                 activeFilter === "cashin"
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200"
-              }
+                  ? "bg-econetBlue text-white rounded-full shadow-lg"
+                  : "text-gray-800"
+              }`}
             >
               Cash-in
             </button>
@@ -150,11 +148,11 @@ export default function TranTable({
                 e.preventDefault();
                 setActiveFilter("cashout");
               }}
-              className={
+              className={`font-bold py-2 px-6 transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 whitespace-nowrap ${
                 activeFilter === "cashout"
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200"
-              }
+                  ? "bg-econetBlue text-white rounded-full shadow-lg"
+                  : "text-gray-800"
+              }`}
             >
               Cash-out
             </button>

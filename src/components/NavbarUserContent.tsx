@@ -92,9 +92,9 @@ export default function NavbarUserContent() {
                   className="space-x-2"
                 >
                   {msisdn.msisdn}
-                  <Badge className="border-2 ml-2 border-yellow-500 hover:bg-yellow-500/20 bg-yellow-500/20 text-yellow-500">
+                  {/* <Badge className="border-2 ml-2 border-yellow-500 hover:bg-yellow-500/20 bg-yellow-500/20 text-yellow-500">
                     Gold
-                  </Badge>
+                  </Badge> */}
                 </SelectItem>
               ))}
             </SelectGroup>
