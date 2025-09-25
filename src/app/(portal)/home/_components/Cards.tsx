@@ -88,12 +88,12 @@ export default function Cards({ coreSpendData, performanceData }: CardsProps) {
           <DashboardCard
             title={"Weekly Transactions"}
             date={formatDate(mostRecentCashIn.txn_week.toString())}
-            value={`${mostRecentCashIn?.weekly_value || "0"} LSL`}
+            value={`M${mostRecentCashIn?.weekly_value || "0"}`}
           ></DashboardCard>
         )}
         {mostRecentCashIn && (
           <DashboardCard
-            title={"Transaction Growth pct"}
+            title={"Transaction Growth"}
             date={formatDate(mostRecentCashIn.txn_week.toString())}
             value={`${mostRecentCashIn?.txn_growth_pct || "0"} %`}
           ></DashboardCard>
@@ -105,13 +105,13 @@ export default function Cards({ coreSpendData, performanceData }: CardsProps) {
           <DashboardCard
             title={"Weekly Cash-In"}
             date={formatDate(mostRecentCashIn.txn_week.toString())}
-            value={`${mostRecentCashIn?.weekly_value || "0"} LSL`}
+            value={`M${mostRecentCashIn?.weekly_value || "0"} `}
           ></DashboardCard>
         )}
 
         {mostRecentCashIn && (
           <DashboardCard
-            title={"Cash-In Value Growth pct"}
+            title={"Cash-In Value Growth"}
             date={formatDate(mostRecentCashIn.txn_week.toString())}
             value={`${mostRecentCashIn?.value_growth_pct || "0"} %`}
           ></DashboardCard>
@@ -120,7 +120,7 @@ export default function Cards({ coreSpendData, performanceData }: CardsProps) {
           <DashboardCard
             title={"Previous Weekly Cash-In"}
             date={formatDate(mostRecentCashIn.txn_week.toString())}
-            value={`${mostRecentCashIn?.prev_weekly_value || "0"} LSL`}
+            value={`M${mostRecentCashIn?.prev_weekly_value || "0"}`}
           ></DashboardCard>
         )}
       </div>
@@ -130,12 +130,12 @@ export default function Cards({ coreSpendData, performanceData }: CardsProps) {
           <DashboardCard
             title={"Weekly Cash-Out"}
             date={formatDate(mostRecentCashOut.txn_week.toString())}
-            value={`${mostRecentCashOut?.weekly_value || "0"} LSL`}
+            value={`M${mostRecentCashOut?.weekly_value || "0"}`}
           ></DashboardCard>
         )}
         {mostRecentCashOut && (
           <DashboardCard
-            title={"Cash-Out Value Growth pct"}
+            title={"Cash-Out Value Growth"}
             date={formatDate(mostRecentCashOut.txn_week.toString())}
             value={`${mostRecentCashOut?.value_growth_pct || "0"} %`}
           ></DashboardCard>
@@ -144,7 +144,7 @@ export default function Cards({ coreSpendData, performanceData }: CardsProps) {
           <DashboardCard
             title={"Previous Weekly Cash-Out"}
             date={formatDate(mostRecentCashOut.txn_week.toString())}
-            value={`${mostRecentCashOut?.prev_weekly_value || "0"} LSL`}
+            value={`M${mostRecentCashOut?.prev_weekly_value || "0"}`}
           ></DashboardCard>
         )}
       </div>
