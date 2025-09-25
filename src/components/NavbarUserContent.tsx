@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { Bell, User } from "lucide-react";
-import { Badge } from "./ui/badge";
 import {
   Select,
   SelectContent,
