@@ -6,6 +6,8 @@ import HomeCard from "./_components/HomeCard";
 // It forces the page to be rendered on every request.
 export const dynamic = "force-dynamic";
 
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+
 export interface HomeProps {
   searchParams: {
     msisdn?: string;
@@ -13,7 +15,7 @@ export interface HomeProps {
 }
 
 export async function getCoreSpendData(msisdn: string) {
-  const res = await fetch(`/api/core_spend?msisdn=${msisdn}`, {
+  const res = await fetch(`${BASE_URL}/api/core_spend?msisdn=${msisdn}`, {
     method: "get",
     headers: {
       Cookie: cookies().toString(),
@@ -23,7 +25,7 @@ export async function getCoreSpendData(msisdn: string) {
 }
 
 export async function getPerformanceData(msisdn: string) {
-  const res = await fetch(`/api/performance?msisdn=${msisdn}`, {
+  const res = await fetch(`${BASE_URL}/api/performance?msisdn=${msisdn}`, {
     method: "get",
     headers: {
       Cookie: cookies().toString(),
@@ -33,7 +35,7 @@ export async function getPerformanceData(msisdn: string) {
 }
 
 export async function getAgentData(msisdn: string) {
-  const res = await fetch(`/api/agents?msisdn=${msisdn}`, {
+  const res = await fetch(`${BASE_URL}/api/agents?msisdn=${msisdn}`, {
     method: "get",
     headers: {
       Cookie: cookies().toString(),
@@ -43,7 +45,7 @@ export async function getAgentData(msisdn: string) {
 }
 
 export async function getEbucksTiers() {
-  const res = await fetch(`/api/ebucks_tiers`, {
+  const res = await fetch(`${BASE_URL}/api/ebucks_tiers`, {
     method: "get",
     headers: {
       Cookie: cookies().toString(),
