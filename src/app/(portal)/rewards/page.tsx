@@ -1,24 +1,46 @@
-"use server";
-
 import RewardProfileCard from "./_components/RewardProfileCard";
 import RewardRowCard from "./_components/RewardRowCard";
-import {
-  AgentResponse,
-  getAgentData,
-  getEbucksTiers,
-  HomeProps,
-} from "../home/page";
+import { AgentResponse, HomeProps } from "../home/page";
+import { cookies } from "next/headers";
+
+export const dynamic = "force-dynamic";
+
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+
+export async function getAgentData(msisdn: string) {
+  const res = await fetch(`${BASE_URL}/api/agents?msisdn=${msisdn}`, {
+    method: "get",
+    headers: {
+      Cookie: cookies().toString(),
+    },
+  });
+  return res.json();
+}
+
+export async function getEbucksTiers() {
+  const res = await fetch(`${BASE_URL}/api/ebucks_tiers`, {
+    method: "get",
+    headers: {
+      Cookie: cookies().toString(),
+    },
+  });
+  return res.json();
+}
 
 export default async function page({ searchParams }: HomeProps) {
   const msisdn = searchParams.msisdn!;
-  const agentData: AgentResponse = await getAgentData(msisdn);
-  const [agent] = await Promise.all([agentData]);
+  const [agentData, ebucksTiersData] = await Promise.all([
+    getAgentData(msisdn),
+    getEbucksTiers(),
+  ]);
+
+  const agent: AgentResponse = agentData;
+  const ebucksTiers = ebucksTiersData;
+
   const activeMsisddn = agent.agent.msisdns.find(
     (m) => m.msisdn === parseInt(msisdn)
   );
   const ebucksBalance = 0;
-  const ebucksTiersData = await getEbucksTiers();
-  // console.log("ebucks tier data: ", ebucksTiersData);
 
   return (
     <div>
@@ -27,7 +49,7 @@ export default async function page({ searchParams }: HomeProps) {
           <RewardProfileCard
             msisdn={activeMsisddn!}
             eBucksBalance={ebucksBalance.toString()}
-            eBucksTiers={ebucksTiersData.ebucks_tiers || []}
+            eBucksTiers={ebucksTiers.ebucks_tiers || []}
           />
           {/* <Card>
             <CardHeader>

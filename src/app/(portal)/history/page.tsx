@@ -1,9 +1,15 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { LayoutPanelLeft, TrendingUp, TrendingDown } from "lucide-react";
-import { AgentResponse, getPerformanceData } from "../home/page";
-import { getAgentData } from "../home/page";
+import { AgentResponse } from "../home/page";
 import { cookies } from "next/headers";
 import TranTable from "./_components/TranTable";
+import { Performance_Rankings } from "@/lib/definitions";
+
+export const dynamic = "force-dynamic";
+
+// Define the base URL for API calls using an environment variable.
+// It falls back to http://localhost:3000 for local development.
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
 interface HomeProps {
   searchParams: {
@@ -18,8 +24,28 @@ interface HomeProps {
 //   // Add other properties that are part of the object
 // }
 
+async function getAgentData(msisdn: string) {
+  const res = await fetch(`${BASE_URL}/api/agents?msisdn=${msisdn}`, {
+    method: "get",
+    headers: {
+      Cookie: cookies().toString(),
+    },
+  });
+  return res.json();
+}
+
 async function getEbucksData(msisdn: string) {
-  const res = await fetch(`http://localhost:3000/api/ebucks?msisdn=${msisdn}`, {
+  const res = await fetch(`${BASE_URL}/api/ebucks?msisdn=${msisdn}`, {
+    method: "get",
+    headers: {
+      Cookie: cookies().toString(),
+    },
+  });
+  return res.json();
+}
+
+async function getPerformanceData(msisdn: string) {
+  const res = await fetch(`${BASE_URL}/api/performance?msisdn=${msisdn}`, {
     method: "get",
     headers: {
       Cookie: cookies().toString(),
@@ -29,19 +55,18 @@ async function getEbucksData(msisdn: string) {
 }
 
 export default async function page({ searchParams }: HomeProps) {
-  console.log("This is in the history page");
   const msisdn = searchParams.msisdn!;
 
-  /* When i specify the data to be Performance_Rankings[] instead of any i get errors */
-  const agentData: AgentResponse = await getAgentData(msisdn);
-  const performanceData = await getPerformanceData(msisdn);
-  const ebucksData = await getEbucksData(msisdn);
-
-  const [agent, performance, ebucks] = await Promise.all([
-    agentData,
-    performanceData,
-    ebucksData,
+  const [agentData, performanceData, ebucksData] = await Promise.all([
+    getAgentData(msisdn),
+    getPerformanceData(msisdn),
+    getEbucksData(msisdn),
   ]);
+
+  const agent: AgentResponse = agentData;
+  const performance: { performanceData: Performance_Rankings[] } =
+    performanceData;
+  const eBucks = ebucksData;
 
   const activeMsisddn = agent.agent.msisdns.find(
     (m) => m.msisdn === parseInt(msisdn)
@@ -109,7 +134,7 @@ export default async function page({ searchParams }: HomeProps) {
             </Card>
           </div>
           {/* Recent Transactions */}
-          <TranTable performanceData={performance} ebucksData={ebucks} />
+          <TranTable performanceData={performance} ebucksData={eBucks} />
         </div>
       </div>
     </div>
