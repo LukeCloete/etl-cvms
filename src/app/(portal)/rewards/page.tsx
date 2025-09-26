@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
-export async function getAgentData(msisdn: string) {
+async function getAgentData(msisdn: string) {
   const res = await fetch(`${BASE_URL}/api/agents?msisdn=${msisdn}`, {
     method: "get",
     headers: {
@@ -17,7 +17,7 @@ export async function getAgentData(msisdn: string) {
   return res.json();
 }
 
-export async function getEbucksTiers() {
+async function getEbucksTiers() {
   const res = await fetch(`${BASE_URL}/api/ebucks_tiers`, {
     method: "get",
     headers: {

@@ -14,7 +14,7 @@ export interface HomeProps {
   };
 }
 
-export async function getCoreSpendData(msisdn: string) {
+async function getCoreSpendData(msisdn: string) {
   const res = await fetch(`${BASE_URL}/api/core_spend?msisdn=${msisdn}`, {
     method: "get",
     headers: {
@@ -24,7 +24,7 @@ export async function getCoreSpendData(msisdn: string) {
   return res.json();
 }
 
-export async function getPerformanceData(msisdn: string) {
+async function getPerformanceData(msisdn: string) {
   const res = await fetch(`${BASE_URL}/api/performance?msisdn=${msisdn}`, {
     method: "get",
     headers: {
@@ -34,7 +34,7 @@ export async function getPerformanceData(msisdn: string) {
   return res.json();
 }
 
-export async function getAgentData(msisdn: string) {
+async function getAgentData(msisdn: string) {
   const res = await fetch(`${BASE_URL}/api/agents?msisdn=${msisdn}`, {
     method: "get",
     headers: {
@@ -44,7 +44,7 @@ export async function getAgentData(msisdn: string) {
   return res.json();
 }
 
-export async function getEbucksTiers() {
+async function getEbucksTiers() {
   const res = await fetch(`${BASE_URL}/api/ebucks_tiers`, {
     method: "get",
     headers: {
