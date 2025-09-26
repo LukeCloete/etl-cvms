@@ -3,6 +3,9 @@ import Cards from "./_components/Cards";
 import { cookies } from "next/headers";
 import HomeCard from "./_components/HomeCard";
 
+// It forces the page to be rendered on every request.
+export const dynamic = "force-dynamic";
+
 export interface HomeProps {
   searchParams: {
     msisdn?: string;
@@ -10,33 +13,27 @@ export interface HomeProps {
 }
 
 export async function getCoreSpendData(msisdn: string) {
-  const res = await fetch(
-    `http://localhost:3000/api/core_spend?msisdn=${msisdn}`,
-    {
-      method: "get",
-      headers: {
-        Cookie: cookies().toString(),
-      },
-    }
-  );
+  const res = await fetch(`/api/core_spend?msisdn=${msisdn}`, {
+    method: "get",
+    headers: {
+      Cookie: cookies().toString(),
+    },
+  });
   return res.json();
 }
 
 export async function getPerformanceData(msisdn: string) {
-  const res = await fetch(
-    `http://localhost:3000/api/performance?msisdn=${msisdn}`,
-    {
-      method: "get",
-      headers: {
-        Cookie: cookies().toString(),
-      },
-    }
-  );
+  const res = await fetch(`/api/performance?msisdn=${msisdn}`, {
+    method: "get",
+    headers: {
+      Cookie: cookies().toString(),
+    },
+  });
   return res.json();
 }
 
 export async function getAgentData(msisdn: string) {
-  const res = await fetch(`http://localhost:3000/api/agents?msisdn=${msisdn}`, {
+  const res = await fetch(`/api/agents?msisdn=${msisdn}`, {
     method: "get",
     headers: {
       Cookie: cookies().toString(),
@@ -46,7 +43,7 @@ export async function getAgentData(msisdn: string) {
 }
 
 export async function getEbucksTiers() {
-  const res = await fetch(`http://localhost:3000/api/ebucks_tiers`, {
+  const res = await fetch(`/api/ebucks_tiers`, {
     method: "get",
     headers: {
       Cookie: cookies().toString(),
@@ -75,24 +72,19 @@ export interface AgentResponse {
 export default async function page({ searchParams }: HomeProps) {
   const msisdn = searchParams.msisdn!;
 
-  const agentData: AgentResponse = await getAgentData(msisdn);
-  const coreSpendData: { coreSpendData: Core_Spend } = await getCoreSpendData(
-    msisdn
-  );
-  const performanceData: { performanceData: Performance_Rankings[] } = await getPerformanceData(
-    msisdn
-  );
-  const ebucksTiersData = await getEbucksTiers();
-  // const ebucksLogData = await getEbucksLog(msisdn);
+  const [agentData, coreSpendData, performanceData, ebucksTiersData] =
+    await Promise.all([
+      getAgentData(msisdn),
+      getCoreSpendData(msisdn),
+      getPerformanceData(msisdn),
+      getEbucksTiers(),
+    ]);
 
-  const [agent, coreSpend, performance, ebucksTiers] = await Promise.all([
-    agentData,
-    coreSpendData,
-    performanceData,
-    ebucksTiersData,
-  ]);
-
-  console.log(agent);
+  const agent: AgentResponse = agentData;
+  const coreSpend: { coreSpendData: Core_Spend } = coreSpendData;
+  const performance: { performanceData: Performance_Rankings[] } =
+    performanceData;
+  const ebucksTiers = ebucksTiersData;
 
   const activeMsisddn = agent.agent.msisdns.find(
     (m) => m.msisdn === parseInt(msisdn)
