@@ -1,45 +1,32 @@
+import { getAgentWithActiveMsisdn } from "@/lib/getAgent";
 import RewardProfileCard from "./_components/RewardProfileCard";
 import RewardRowCard from "./_components/RewardRowCard";
-import { AgentResponse, HomeProps } from "../home/page";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { getEbucksTiers } from "@/lib/getEbucksTiers";
+import { Ebucks_Tiers, Msisdns } from "@/lib/definitions";
 
-export const dynamic = "force-dynamic";
+export default async function page() {
+  // Get agent and active MSISDN from cookies
+  const data = await getAgentWithActiveMsisdn();
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+  if (!data) {
+    redirect("/log-in");
+  }
 
-async function getAgentData(msisdn: string) {
-  const res = await fetch(`${BASE_URL}/api/agents?msisdn=${msisdn}`, {
-    method: "get",
-    headers: {
-      Cookie: cookies().toString(),
-    },
-  });
-  return res.json();
-}
+  const { agent, activeMsisdn } = data;
 
-async function getEbucksTiers() {
-  const res = await fetch(`${BASE_URL}/api/ebucks_tiers`, {
-    method: "get",
-    headers: {
-      Cookie: cookies().toString(),
-    },
-  });
-  return res.json();
-}
+  // Fetch all data in parallel
+  const ebucksTiersData = await getEbucksTiers();
 
-export default async function page({ searchParams }: HomeProps) {
-  const msisdn = searchParams.msisdn!;
-  const [agentData, ebucksTiersData] = await Promise.all([
-    getAgentData(msisdn),
-    getEbucksTiers(),
-  ]);
+  const ebucksTiers: Ebucks_Tiers[] =
+    (ebucksTiersData?.ebucks_tiers as unknown as Ebucks_Tiers[]) || [];
 
-  const agent: AgentResponse = agentData;
-  const ebucksTiers = ebucksTiersData;
-
-  const activeMsisddn = agent.agent.msisdns.find(
-    (m) => m.msisdn === parseInt(msisdn)
+  // Find the active MSISDN object
+  const activeMsisdnObj: Msisdns | undefined = agent.msisdns.find(
+    (m: Msisdns) => m.msisdn.toString() === activeMsisdn
   );
+
   const ebucksBalance = 0;
 
   return (
@@ -47,9 +34,9 @@ export default async function page({ searchParams }: HomeProps) {
       <div className="flex p-8 ">
         <div className="w-1/5 flex flex-col gap-4">
           <RewardProfileCard
-            msisdn={activeMsisddn!}
+            msisdn={activeMsisdnObj || null}
             eBucksBalance={ebucksBalance.toString()}
-            eBucksTiers={ebucksTiers.ebucks_tiers || []}
+            eBucksTiers={ebucksTiers}
           />
           {/* <Card>
             <CardHeader>

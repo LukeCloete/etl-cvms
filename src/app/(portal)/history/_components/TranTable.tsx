@@ -211,7 +211,7 @@ export default function TranTable({
                   ) : (
                     <BanknoteArrowDown className="text-white size-6" />
                   );
-                  currency = "LSL";
+                  currency = "M";
                 } else {
                   const ebucksElement = element as Ebucks_log;
                   // This is ebucksData
@@ -279,7 +279,8 @@ export default function TranTable({
                               {isCashIn ? "Transaction" : "Transaction"}
                             </p>
                             <p className="font-bold">
-                              {isCashIn ? "+" : "-"} {value} {currency}
+                              {isCashIn ? "+" : "-"} {currency}{" "}
+                              {value.toLocaleString("sv-SE")}
                             </p>
                           </div>
                           <p className="ml-auto">

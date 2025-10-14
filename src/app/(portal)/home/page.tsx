@@ -1,7 +1,4 @@
-import {
-  Msisdns,
-  Ebucks_Tiers,
-} from "@/lib/definitions";
+import { Msisdns, Ebucks_Tiers } from "@/lib/definitions";
 import Cards from "./_components/Cards";
 import HomeCard from "./_components/HomeCard";
 import HomeCardSkeleton from "./_components/HomeCardSkeleton";
@@ -14,7 +11,7 @@ import { Suspense } from "react";
 export default async function Page() {
   // Get agent and active MSISDN from cookies
   const data = await getAgentWithActiveMsisdn();
-  
+
   if (!data) {
     redirect("/log-in");
   }
@@ -22,13 +19,10 @@ export default async function Page() {
   const { agent, activeMsisdn } = data;
 
   // Fetch all data in parallel
-  const [ ebucksTiersData] = await Promise.all([
-    
-    getEbucksTiers(),
-  ]);
+  const ebucksTiersData = await getEbucksTiers();
 
-  
-  const ebucksTiers: Ebucks_Tiers[] = (ebucksTiersData?.ebucks_tiers as unknown as Ebucks_Tiers[]) || [];
+  const ebucksTiers: Ebucks_Tiers[] =
+    (ebucksTiersData?.ebucks_tiers as unknown as Ebucks_Tiers[]) || [];
 
   // Find the active MSISDN object
   const activeMsisdnObj: Msisdns | undefined = agent.msisdns.find(
@@ -42,7 +36,6 @@ export default async function Page() {
           <p className="text-econetBlue text-3xl font-bold">
             Welcome {agent.name || "Agent"}
           </p>
-          
 
           <Suspense fallback={<HomeCardSkeleton />}>
             <HomeCard
@@ -52,9 +45,7 @@ export default async function Page() {
           </Suspense>
 
           <Suspense fallback={<CardsSkeleton />}>
-            <Cards 
-              activeMsisdn={activeMsisdnObj || null} 
-            />
+            <Cards activeMsisdn={activeMsisdnObj || null} />
           </Suspense>
         </div>
       </div>
