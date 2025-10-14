@@ -1,77 +1,40 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { LayoutPanelLeft, TrendingUp, TrendingDown } from "lucide-react";
-import { AgentResponse } from "../home/page";
-import { cookies } from "next/headers";
 import TranTable from "./_components/TranTable";
-import { Performance_Rankings } from "@/lib/definitions";
+import { Ebucks_log, Msisdns, Performance_Rankings } from "@/lib/definitions";
+import { getAgentData, getAgentWithActiveMsisdn } from "@/lib/getAgent";
+import { redirect } from "next/navigation";
+import { getPerformanceData } from "@/lib/getPerformance";
+import { getEbucksLogData } from "@/lib/getEbucksLog";
 
-export const dynamic = "force-dynamic";
+export default async function page() {
+  // Get agent and active MSISDN from cookies
+  const data = await getAgentWithActiveMsisdn();
 
-// Define the base URL for API calls using an environment variable.
-// It falls back to http://localhost:3000 for local development.
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+  if (!data) {
+    redirect("/log-in");
+  }
 
-interface HomeProps {
-  searchParams: {
-    msisdn?: string;
-  };
-}
-// // Define the structure of the object
-// interface MsisdnData {
-//   msisdn: number;
-//   current_ebucks_balance: number;
-//   current_performance_score: number;
-//   // Add other properties that are part of the object
-// }
+  const { agent, activeMsisdn } = data;
 
-async function getAgentData(msisdn: string) {
-  const res = await fetch(`${BASE_URL}/api/agents?msisdn=${msisdn}`, {
-    method: "get",
-    headers: {
-      Cookie: cookies().toString(),
-    },
-  });
-  return res.json();
-}
-
-async function getEbucksData(msisdn: string) {
-  const res = await fetch(`${BASE_URL}/api/ebucks?msisdn=${msisdn}`, {
-    method: "get",
-    headers: {
-      Cookie: cookies().toString(),
-    },
-  });
-  return res.json();
-}
-
-async function getPerformanceData(msisdn: string) {
-  const res = await fetch(`${BASE_URL}/api/performance?msisdn=${msisdn}`, {
-    method: "get",
-    headers: {
-      Cookie: cookies().toString(),
-    },
-  });
-  return res.json();
-}
-
-export default async function page({ searchParams }: HomeProps) {
-  const msisdn = searchParams.msisdn!;
-
-  const [agentData, performanceData, ebucksData] = await Promise.all([
-    getAgentData(msisdn),
-    getPerformanceData(msisdn),
-    getEbucksData(msisdn),
+  const [performanceData, ebucksData] = await Promise.all([
+    getPerformanceData(activeMsisdn),
+    getEbucksLogData(activeMsisdn),
   ]);
 
-  const agent: AgentResponse = agentData;
-  const performance: { performanceData: Performance_Rankings[] } =
-    performanceData;
-  const eBucks = ebucksData;
+  console.log(performanceData);
 
-  const activeMsisddn = agent.agent.msisdns.find(
-    (m) => m.msisdn === parseInt(msisdn)
+  const performance: Performance_Rankings[] =
+    performanceData?.performanceData as unknown as Performance_Rankings[];
+
+  const eBucks = ebucksData?.ebucksData as unknown as Ebucks_log[];
+
+  // Find the active MSISDN object
+  const activeMsisdnObj: Msisdns | undefined = agent.msisdns.find(
+    (m: Msisdns) => m.msisdn.toString() === activeMsisdn
   );
-  const currentEbucksBalance = activeMsisddn?.current_ebucks_balance || 0;
+
+  const currentEbucksBalance = activeMsisdnObj?.current_ebucks_balance || 0;
 
   const totalRedeemed = 0;
   const remainingBalance = currentEbucksBalance - totalRedeemed;
@@ -134,7 +97,10 @@ export default async function page({ searchParams }: HomeProps) {
             </Card>
           </div>
           {/* Recent Transactions */}
-          <TranTable performanceData={performance} ebucksData={eBucks} />
+          <TranTable
+            performanceData={{ performanceData: performance }}
+            ebucksData={{ ebucksData: eBucks }}
+          />
         </div>
       </div>
     </div>

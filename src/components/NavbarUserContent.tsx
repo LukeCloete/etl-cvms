@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Bell, User } from "lucide-react";
 import {
   Select,
@@ -12,62 +11,43 @@ import {
   SelectValue,
 } from "./ui/select";
 import { Agents } from "@/lib/definitions";
-import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { setActiveMsisdn } from "@/lib/actions";
+import { useTransition } from "react";
 
-export default function NavbarUserContent() {
-  const [agent, setAgent] = useState<Agents | null>(null);
-  const [loading, setLoading] = useState(true);
-  const searchParams = useSearchParams();
-  const router = useRouter();
-
-  useEffect(() => {
-    async function fetchAgent(msisdn?: string) {
-      setLoading(true);
-      try {
-        const url = msisdn ? `/api/agents?msisdn=${msisdn}` : "/api/agent/me";
-        const response = await fetch(url); // Client-side fetch automatically includes cookies
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch agent data.");
-        }
-
-        const data = await response.json();
-        setAgent(data.agent);
-      } catch (error) {
-        console.error("Error fetching agent data:", error);
-        setAgent(null);
-      } finally {
-        setLoading(false);
-      }
-    }
-    const msisdn = searchParams.get("msisdn");
-    fetchAgent(msisdn || undefined);
-  }, [searchParams]);
+export default function NavbarUserContent({ 
+  agent,
+  activeMsisdn 
+}: { 
+  agent: Agents | null;
+  activeMsisdn: string | null;
+}) {
+  const [isPending, startTransition] = useTransition();
 
   const handleMsisdnChange = (newMsisdn: string) => {
-    const params = new URLSearchParams(searchParams);
-    params.set("msisdn", newMsisdn);
-    router.push(`/home?${params.toString()}`);
+    startTransition(async () => {
+      await setActiveMsisdn(newMsisdn);
+    });
   };
 
-  if (loading || !agent) {
+  if (!agent) {
     return (
       <div className="flex items-center justify-center gap-2">
-        {/* Skeleton or Login link based on logic */}
-        {loading ? (
-          <LoadingSkeleton />
-        ) : (
-          <>
-            <User />
-            <p>
-              <a href="/log-in" className="text-sm">
-                Log In
-              </a>
-            </p>
-          </>
-        )}
+        <>
+          <User />
+          <p>
+            <Link href="/log-in" className="text-sm">
+              Log In
+            </Link>
+          </p>
+        </>
       </div>
     );
+  }
+
+  // Show loading skeleton while switching MSISDN
+  if (isPending) {
+    return <LoadingSkeleton />;
   }
 
   return (
@@ -76,6 +56,7 @@ export default function NavbarUserContent() {
       <div className="flex items-center justify-center gap-2 rounded-full p-2">
         <Select
           onValueChange={handleMsisdnChange}
+          value={activeMsisdn || agent.msisdns[0]?.msisdn.toString()}
           defaultValue={agent.msisdns[0]?.msisdn.toString()}
         >
           <SelectTrigger className="rounded-full">
@@ -91,9 +72,6 @@ export default function NavbarUserContent() {
                   className="space-x-2"
                 >
                   {msisdn.msisdn}
-                  {/* <Badge className="border-2 ml-2 border-yellow-500 hover:bg-yellow-500/20 bg-yellow-500/20 text-yellow-500">
-                    Gold
-                  </Badge> */}
                 </SelectItem>
               ))}
             </SelectGroup>

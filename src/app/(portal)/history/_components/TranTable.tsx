@@ -14,12 +14,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Mail } from "lucide-react";
-import { Funnel, CardSim, PhoneCall } from "lucide-react";
+import { DatePickerWithRange } from "@/components/ui/date-picker";
+import { Funnel, CardSim, PhoneCall, Mail } from "lucide-react";
 import { BanknoteArrowUp } from "lucide-react";
 import { BanknoteArrowDown } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Performance_Rankings, Ebucks_log } from "@/lib/definitions";
+import { DateRange } from "react-day-picker";
 
 type TranTableProps = {
   performanceData: {
@@ -41,8 +42,8 @@ export default function TranTable({
   const [activeFilter, setActiveFilter] = useState("all"); // 'all' or 'cashin'
 
   const combinedData = useMemo(() => {
-    const performanceArray = performanceData.performanceData;
-    const ebucksArray = ebucksData.ebucksData;
+    const performanceArray = performanceData.performanceData || [];
+    const ebucksArray = ebucksData.ebucksData || [];
 
     // Combine both arrays into a single transactions array.
     const combined = [...performanceArray, ...ebucksArray];
@@ -51,10 +52,14 @@ export default function TranTable({
     // Using `$createdAt` as it seems to be available in both data structures.
     combined.sort((a, b) => {
       const dateA = new Date(
-        (a as Performance_Rankings).txn_week || (a as Ebucks_log).$createdAt
+        "txn_week" in a
+          ? (a as Performance_Rankings).txn_week
+          : (a as Ebucks_log).$createdAt
       ).getTime();
       const dateB = new Date(
-        (b as Performance_Rankings).txn_week || (b as Ebucks_log).$createdAt
+        "txn_week" in b
+          ? (b as Performance_Rankings).txn_week
+          : (b as Ebucks_log).$createdAt
       ).getTime();
       // Sort from newest to oldest
       return dateB - dateA;
@@ -63,7 +68,9 @@ export default function TranTable({
     return combined;
   }, [performanceData, ebucksData]);
 
-  // Use useEffect to update the filtered data whenever the search query changes
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
+
+  // Use useEffect to update the filtered data whenever the search query or date range changes
   useEffect(() => {
     const results = combinedData.filter((element) => {
       // Check for the search query
@@ -80,14 +87,27 @@ export default function TranTable({
         // The opposite of CASHIN is considered a cash-out
         matchesFilter = "txn_type" in element && element.txn_type !== "CASHIN";
       }
-      // If activeFilter is "all", matchesFilter remains true
 
-      return matchesSearch && matchesFilter;
+      // Check for the date range filter
+      let matchesDateRange = true;
+      if (dateRange?.from && dateRange?.to) {
+        const transactionDateString =
+          "txn_week" in element
+            ? (element as Performance_Rankings).txn_week
+            : (element as Ebucks_log).date;
+        if (transactionDateString) {
+          const transactionDate = new Date(transactionDateString);
+          matchesDateRange =
+            transactionDate >= dateRange.from &&
+            transactionDate <= dateRange.to;
+        }
+      }
+
+      return matchesSearch && matchesFilter && matchesDateRange;
     });
     setFilteredData(results);
-  }, [searchQuery, activeFilter, combinedData]);
+  }, [searchQuery, activeFilter, combinedData, dateRange]);
 
-  // console.log("this is the combined data array of objects", combinedData);
   return (
     <div>
       <Card className="mb-8">
@@ -114,6 +134,7 @@ export default function TranTable({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
+            <DatePickerWithRange onDateChange={setDateRange} />
             <button
               type="button"
               onClick={(e) => {

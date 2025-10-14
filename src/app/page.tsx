@@ -1,12 +1,13 @@
-import axiosInstance from "@/lib/axiosInstance";
-import { Agents, Msisdns } from "@/lib/definitions";
+import { Msisdns } from "@/lib/definitions";
+import { getCurrentAgent } from "@/lib/getAgent";
+import { redirect } from "next/navigation";
 
 export default async function Home() {
-  const response = await axiosInstance({
-    url: "http://localhost:3000/api/agent/me",
-    method: "get",
-  });
-  const agent: Agents = response.data.agent;
+  const agent = await getCurrentAgent();
+
+  if (!agent) {
+    redirect("/log-in");
+  }
 
   return (
     <main className="container mx-auto max-w-[800px]">
