@@ -1,7 +1,6 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import { Models } from "appwrite";
 import { z } from "zod";
 import { createAdminClient, createSessionClient } from "@/appwrite/config";
@@ -19,50 +18,62 @@ const formSchema = z.object({
  * @param formData - The form data containing email and password.
  */
 export async function createSession(formData: FormData) {
-  const data = Object.fromEntries(formData);
-  const { email, password } = formSchema.parse(data);
-
-  const { account, tablesDB } = await createAdminClient();
-  const session = await account.createEmailPasswordSession({
-    email,
-    password,
-  });
-  
-  cookies().set("session", session.secret, {
-    httpOnly: true,
-    sameSite: "strict",
-    secure: true,
-    expires: new Date(session.expire),
-    path: "/",
-  });
-
-  // Get the user's agent data and set default active MSISDN
   try {
-    const { account: sessionAccount } = await createSessionClient(session.secret);
-    const user = await sessionAccount.get();
+    const data = Object.fromEntries(formData);
+    const { email, password } = formSchema.parse(data);
 
-    // Get agent's MSISDNs
-    const { rows: msisdns } = await tablesDB.listRows({
-      databaseId: process.env.APPWRITE_DATABASE_ID!,
-      tableId: process.env.APPWRITE_TABLE_MSISDNS!,
-      queries: [Query.equal("agent", user.$id)],
+    const { account, tablesDB } = await createAdminClient();
+    const session = await account.createEmailPasswordSession({
+      email,
+      password,
     });
 
-    // Set the first MSISDN as active by default
-    if (msisdns.length > 0) {
-      cookies().set("active_msisdn", msisdns[0].msisdn.toString(), {
-        httpOnly: true,
-        sameSite: "strict",
-        secure: true,
-        expires: new Date(session.expire),
-        path: "/",
-      });
-    }
-  } catch (error) {
-    console.error("Error setting default active MSISDN:", error);
-  }
+    cookies().set("session", session.secret, {
+      httpOnly: true,
+      sameSite: "strict",
+      secure: true,
+      expires: new Date(session.expire),
+      path: "/",
+    });
 
-  redirect("/home");
+    // Nested try...catch for non-critical part
+    try {
+      const { account: sessionAccount } = await createSessionClient(
+        session.secret
+      );
+      const user = await sessionAccount.get();
+      const { rows: msisdns } = await tablesDB.listRows({
+        databaseId: process.env.APPWRITE_DATABASE_ID!,
+        tableId: process.env.APPWRITE_TABLE_MSISDNS!,
+        queries: [Query.equal("agent", user.$id)],
+      });
+
+      if (msisdns.length > 0) {
+        cookies().set("active_msisdn", msisdns[0].msisdn.toString(), {
+          httpOnly: true,
+          sameSite: "strict",
+          secure: true,
+          expires: new Date(session.expire),
+          path: "/",
+        });
+      }
+    } catch (error) {
+      return {
+        success: true,
+        warning:
+          "Login successful, but failed to set default MSISDN: " +
+          (error as Error).message,
+      };
+    }
+
+    return { success: true };
+  } catch (error) {
+    // This is the catch-all for any error, including validation.
+    return {
+      success: false,
+      error: (error as Error).message,
+    };
+  }
 }
 
 /**
@@ -97,7 +108,9 @@ export async function setActiveMsisdn(msisdn: string) {
     }
 
     // Verify the MSISDN belongs to the current user
-    const { tablesDB, account } = await createSessionClient(sessionCookie.value);
+    const { tablesDB, account } = await createSessionClient(
+      sessionCookie.value
+    );
     const user = await account.get();
 
     const { rows: msisdns } = await tablesDB.listRows({
@@ -124,7 +137,7 @@ export async function setActiveMsisdn(msisdn: string) {
 
     // Revalidate all portal pages to reflect the change
     revalidatePath("/", "layout");
-    
+
     return { success: true };
   } catch (error) {
     console.error("Error setting active MSISDN:", error);
