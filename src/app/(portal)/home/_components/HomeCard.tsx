@@ -14,13 +14,45 @@ import clsx from "clsx";
 import { useEffect, useState } from "react";
 
 interface HomeCardProps {
-  msisdn: Msisdns;
-  eBucksTiers: Ebucks_Tiers[];
+  msisdn: Msisdns | null;
+  eBucksTiers: Ebucks_Tiers[] | null;
 }
 
 export default function HomeCard({ msisdn, eBucksTiers }: HomeCardProps) {
   const [progress, setProgress] = useState(0);
-  // const [loading, setLoading] = useState(true);
+
+  if (!msisdn || !eBucksTiers) {
+    return (
+      <Card className="bg-econetBlue text-econetWhite">
+        <CardHeader>
+          <div className="flex flex-row justify-between">
+            <CardTitle className="tracking-wide">
+              Your E-Bucks Balance
+            </CardTitle>
+            <CardTitle className="tracking-wide">
+              Your Performance Score
+            </CardTitle>
+          </div>
+          <div className="flex flex-row justify-between items-center">
+            <CardDescription className="text-white/80 text-sm">
+              Earn more with every use of EcoCash services
+            </CardDescription>
+            <CardDescription className="text-white/80 text-sm">
+              Your score is based on your weekly transactions
+            </CardDescription>
+          </div>
+        </CardHeader>
+        <CardContent className="mt-8">
+          <div className="flex items-center justify-center">
+            <p>No data available</p>
+          </div>
+        </CardContent>
+        <CardFooter>
+          <Progress value={0} />
+        </CardFooter>
+      </Card>
+    );
+  }
 
   // Find the next tier based on the eBucksBalance prop
   const eBucksToNextTier = eBucksTiers.find(
@@ -35,14 +67,11 @@ export default function HomeCard({ msisdn, eBucksTiers }: HomeCardProps) {
     ? (msisdn.current_ebucks_balance / eBucksToNextTier.min_balance_req) * 100
     : 100; // max progress
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     const timer = setTimeout(() => setProgress(eBucksBalanceInPercentage), 500);
     return () => clearTimeout(timer);
   }, [eBucksBalanceInPercentage]);
-
-  console.log("ebucks to next tier", eBucksToNextTier);
-  // console.log("This is the HomeCard component");
-  // console.log("Performance:", performanceData);
 
   return (
     <Card className=" bg-econetBlue text-econetWhite">
@@ -66,7 +95,7 @@ export default function HomeCard({ msisdn, eBucksTiers }: HomeCardProps) {
         <div className="flex flex-row justify-between items-center">
           <div className="flex flex-col items-start">
             <p className="text-4xl font-bold mb-2">
-              {msisdn.current_ebucks_balance} E-Bucks
+              {msisdn.current_ebucks_balance ?? 0} E-Bucks
             </p>
             {eBucksToNextTier ? (
               <p className="font-bold text-white/80 text-sm">
@@ -87,12 +116,12 @@ export default function HomeCard({ msisdn, eBucksTiers }: HomeCardProps) {
 
           <div className="flex flex-col items-end">
             <p className="text-4xl font-bold mb-2">
-              {msisdn.current_performance_score}
+              {msisdn.current_performance_score ?? "-"}
             </p>
             <p className="font-bold text-sm text-white/80">
               Rank:{" "}
               <span className="text-amber-500">
-                {msisdn.current_performance_rank}
+                {msisdn.current_performance_rank ?? "-"}
               </span>
             </p>
           </div>

@@ -5,27 +5,29 @@ import { redirect } from "next/navigation";
 import { Models } from "appwrite";
 import { z } from "zod";
 import { createAdminClient, createSessionClient } from "@/appwrite/config";
-
+import { revalidatePath } from "next/cache";
 import { Query } from "node-appwrite";
 
 const formSchema = z.object({
-  email: z.string().email(),
+  email: z.email(),
   password: z.string().min(3),
 });
 
 /**
  * Handles user authentication and session creation on the server.
+ * Also sets the default active MSISDN cookie.
  * @param formData - The form data containing email and password.
  */
 export async function createSession(formData: FormData) {
   const data = Object.fromEntries(formData);
   const { email, password } = formSchema.parse(data);
 
-  const { tablesDB, account } = await createAdminClient();
+  const { account, tablesDB } = await createAdminClient();
   const session = await account.createEmailPasswordSession({
     email,
     password,
   });
+  
   cookies().set("session", session.secret, {
     httpOnly: true,
     sameSite: "strict",
@@ -34,26 +36,33 @@ export async function createSession(formData: FormData) {
     path: "/",
   });
 
-  const { account: sessionAccount } = await createSessionClient(session.secret);
-  const user = await sessionAccount.get();
+  // Get the user's agent data and set default active MSISDN
+  try {
+    const { account: sessionAccount } = await createSessionClient(session.secret);
+    const user = await sessionAccount.get();
 
-  // Find the MSISDN document associated with the user's ID
-  const { rows: msisdnRows } = await tablesDB.listRows({
-    databaseId: process.env.APPWRITE_DATABASE_ID!,
-    tableId: "msisdns",
-    queries: [Query.equal("agent", user.$id)],
-  });
+    // Get agent's MSISDNs
+    const { rows: msisdns } = await tablesDB.listRows({
+      databaseId: process.env.APPWRITE_DATABASE_ID!,
+      tableId: process.env.APPWRITE_TABLE_MSISDNS!,
+      queries: [Query.equal("agent", user.$id)],
+    });
 
-  const msisdnDoc = msisdnRows[0] || null;
-  let redirectUrl = "/home";
-
-  if (msisdnDoc) {
-    redirectUrl = `/home?msisdn=${msisdnDoc.msisdn}`;
-  } else {
-    console.error(`No MSISDN found for user ID: ${user.$id}`);
+    // Set the first MSISDN as active by default
+    if (msisdns.length > 0) {
+      cookies().set("active_msisdn", msisdns[0].msisdn.toString(), {
+        httpOnly: true,
+        sameSite: "strict",
+        secure: true,
+        expires: new Date(session.expire),
+        path: "/",
+      });
+    }
+  } catch (error) {
+    console.error("Error setting default active MSISDN:", error);
   }
 
-  redirect(redirectUrl);
+  redirect("/home");
 }
 
 /**
@@ -73,6 +82,63 @@ export async function getUser(): Promise<Models.User<Models.Preferences> | null>
     console.error("Error getting user:", error);
     return null;
   }
+}
+
+/**
+ * Sets the active MSISDN for the current user.
+ * This is a server action that can be called from client components.
+ * @param msisdn - The MSISDN to set as active
+ */
+export async function setActiveMsisdn(msisdn: string) {
+  try {
+    const sessionCookie = cookies().get("session");
+    if (!sessionCookie) {
+      throw new Error("No session found");
+    }
+
+    // Verify the MSISDN belongs to the current user
+    const { tablesDB, account } = await createSessionClient(sessionCookie.value);
+    const user = await account.get();
+
+    const { rows: msisdns } = await tablesDB.listRows({
+      databaseId: process.env.APPWRITE_DATABASE_ID!,
+      tableId: process.env.APPWRITE_TABLE_MSISDNS!,
+      queries: [
+        Query.equal("agent", user.$id),
+        Query.equal("msisdn", parseInt(msisdn)),
+      ],
+    });
+
+    if (msisdns.length === 0) {
+      throw new Error("MSISDN does not belong to current user");
+    }
+
+    // Set the active MSISDN cookie
+    cookies().set("active_msisdn", msisdn, {
+      httpOnly: true,
+      sameSite: "strict",
+      secure: true,
+      maxAge: 60 * 60 * 24 * 30, // 30 days
+      path: "/",
+    });
+
+    // Revalidate all portal pages to reflect the change
+    revalidatePath("/", "layout");
+    
+    return { success: true };
+  } catch (error) {
+    console.error("Error setting active MSISDN:", error);
+    return { success: false, error: (error as Error).message };
+  }
+}
+
+/**
+ * Gets the active MSISDN from cookie.
+ * @returns The active MSISDN string, or null if not set
+ */
+export async function getActiveMsisdnFromCookie() {
+  const activeMsisdnCookie = cookies().get("active_msisdn");
+  return activeMsisdnCookie?.value || null;
 }
 
 // export async function processExcelFile(

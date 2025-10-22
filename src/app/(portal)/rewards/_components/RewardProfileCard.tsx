@@ -6,17 +6,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Landmark } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Msisdns, Ebucks_Tiers } from "@/lib/definitions";
 import clsx from "clsx";
+import { Badge } from "@/components/ui/badge";
 
 interface RewardProfileCardProps {
   eBucksBalance: string;
-  eBucksTiers: Ebucks_Tiers[];
-  msisdn: Msisdns;
+  eBucksTiers: Ebucks_Tiers[] | null;
+  msisdn: Msisdns | null;
 }
 
 export default function RewardProfileCard({
@@ -25,18 +25,54 @@ export default function RewardProfileCard({
   msisdn,
 }: RewardProfileCardProps) {
   const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    if (msisdn && eBucksTiers) {
+      const eBucksToNextTier = eBucksTiers.find(
+        (tier) => tier.min_balance_req > msisdn.current_ebucks_balance
+      );
+
+      const eBucksBalanceInPercentage = eBucksToNextTier
+        ? (msisdn.current_ebucks_balance / eBucksToNextTier.min_balance_req) *
+          100
+        : 100; // max progress
+
+      const timer = setTimeout(
+        () => setProgress(eBucksBalanceInPercentage),
+        500
+      );
+      return () => clearTimeout(timer);
+    }
+  }, [msisdn, eBucksTiers]);
+
+  if (!msisdn || !eBucksTiers) {
+    return (
+      <Card className="bg-econetBlue text-econetWhite p-2 rounded-lg flex flex-col justify-center items-center">
+        <CardHeader>
+          <CardTitle className="flex items-center justify-center gap-2">
+            <Landmark />
+            E-Bucks Balance
+          </CardTitle>
+          <CardDescription className="text-econetWhite">
+            Earn more with every Econet service
+          </CardDescription>
+        </CardHeader>
+        <CardContent className=" flex">
+          <div className="text-4xl font-bold">
+            <p>No data available</p>
+          </div>
+        </CardContent>
+        <CardContent className="flex w-full">
+          <Progress value={0} />
+        </CardContent>
+      </Card>
+    );
+  }
+
   const eBucksToNextTier = eBucksTiers.find(
     (tier) => tier.min_balance_req > msisdn.current_ebucks_balance
   );
 
-  const eBucksBalanceInPercentage = eBucksToNextTier
-    ? (msisdn.current_ebucks_balance / eBucksToNextTier.min_balance_req) * 100
-    : 100; // max progress
-
-  useEffect(() => {
-    const timer = setTimeout(() => setProgress(eBucksBalanceInPercentage), 500);
-    return () => clearTimeout(timer);
-  }, [eBucksBalanceInPercentage]);
   return (
     <Card className="bg-econetBlue text-econetWhite p-2 rounded-lg flex flex-col justify-center items-center">
       <CardHeader>
@@ -53,7 +89,7 @@ export default function RewardProfileCard({
           <p>{eBucksBalance}</p>
         </div>
       </CardContent>
-      <CardContent className="flex w-full">
+      <CardContent className="flex w-full items-center justify-center gap-2">
         <Progress value={progress} />
         {eBucksToNextTier && (
           <Badge
