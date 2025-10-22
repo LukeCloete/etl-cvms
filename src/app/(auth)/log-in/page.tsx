@@ -55,7 +55,7 @@ export default function Page() {
         if (response.warning) {
           toast.warning(response.warning);
         }
-        router.push("/portal/home");
+        router.push("/home");
       } else if (response.error) {
         toast.error(response.error);
       }

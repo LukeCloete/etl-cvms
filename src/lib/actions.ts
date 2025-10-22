@@ -5,6 +5,7 @@ import { Models } from "appwrite";
 import { z } from "zod";
 import { createAdminClient, createSessionClient } from "@/appwrite/config";
 import { revalidatePath } from "next/cache";
+import { getErrorMessage } from "@/lib/utils";
 import { Query } from "node-appwrite";
 
 const formSchema = z.object({
@@ -62,7 +63,7 @@ export async function createSession(formData: FormData) {
         success: true,
         warning:
           "Login successful, but failed to set default MSISDN: " +
-          (error as Error).message,
+          getErrorMessage(error),
       };
     }
 
@@ -71,7 +72,7 @@ export async function createSession(formData: FormData) {
     // This is the catch-all for any error, including validation.
     return {
       success: false,
-      error: (error as Error).message,
+      error: getErrorMessage(error),
     };
   }
 }
