@@ -5,7 +5,6 @@ import { Models } from "appwrite";
 import { z, ZodError } from "zod";
 import { createAdminClient, createSessionClient } from "@/appwrite/config";
 import { revalidatePath } from "next/cache";
-import { getErrorMessage } from "@/lib/utils";
 import { AppwriteException, Query } from "node-appwrite";
 
 const formSchema = z.object({
