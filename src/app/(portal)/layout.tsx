@@ -10,12 +10,13 @@ export default async function Layout({
   const data = await getAgentWithActiveMsisdn();
 
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className="pt-16">
-        <Navbar agent={data?.agent || null} activeMsisdn={data?.activeMsisdn || null} />
-        {children}
-        <Footer/>
-      </body>
-    </html>
+    <section>
+      <Navbar
+        agent={data?.agent || null}
+        activeMsisdn={data?.activeMsisdn || null}
+      />
+      {children}
+      <Footer />
+    </section>
   );
 }
