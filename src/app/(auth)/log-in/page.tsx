@@ -20,6 +20,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { createSession } from "@/lib/actions";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   emailAddress: z.string().email({ message: "Email address is not valid." }),
@@ -28,6 +29,7 @@ const formSchema = z.object({
 
 export default function Page() {
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -37,21 +39,28 @@ export default function Page() {
   });
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log("submitting");
     if (isLoading) return;
+    setIsLoading(true);
     toast.info("Logging in...");
 
     try {
       const formData = new FormData();
       formData.append("email", values.emailAddress);
       formData.append("password", values.password);
-      setIsLoading(true);
-      await createSession(formData);
 
-      toast.success("Login successful!");
+      const response = await createSession(formData);
+
+      if (response.success) {
+        toast.success("Login successful!");
+        if (response.warning) {
+          toast.warning(response.warning);
+        }
+        router.push("/home");
+      } else if (response.error) {
+        toast.error(response.error);
+      }
     } catch (e) {
       toast.error(getErrorMessage(e));
-      console.error("error ", e);
     } finally {
       setIsLoading(false);
     }
