@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { LayoutPanelLeft, TrendingUp, TrendingDown } from "lucide-react";
 import TranTable from "./_components/TranTable";
 import { Ebucks_log, Msisdns, Performance_Rankings } from "@/lib/definitions";
-import { getAgentData, getAgentWithActiveMsisdn } from "@/lib/getAgent";
+import { getAgentWithActiveMsisdn } from "@/lib/getAgent";
 import { redirect } from "next/navigation";
 import { getPerformanceData } from "@/lib/getPerformance";
 import { getEbucksLogData } from "@/lib/getEbucksLog";
@@ -21,8 +21,6 @@ export default async function page() {
     getPerformanceData(activeMsisdn),
     getEbucksLogData(activeMsisdn),
   ]);
-
-  console.log(performanceData);
 
   const performance: Performance_Rankings[] =
     performanceData?.performanceData as unknown as Performance_Rankings[];

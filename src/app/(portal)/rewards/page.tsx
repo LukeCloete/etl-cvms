@@ -1,7 +1,6 @@
 import { getAgentWithActiveMsisdn } from "@/lib/getAgent";
 import RewardProfileCard from "./_components/RewardProfileCard";
 import RewardRowCard from "./_components/RewardRowCard";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getEbucksTiers } from "@/lib/getEbucksTiers";
 import { Ebucks_Tiers, Msisdns } from "@/lib/definitions";
