@@ -6,6 +6,8 @@ import { getAgentWithActiveMsisdn } from "@/lib/getAgent";
 import { redirect } from "next/navigation";
 import { getPerformanceData } from "@/lib/getPerformance";
 import { getEbucksLogData } from "@/lib/getEbucksLog";
+import { Suspense } from "react";
+import HistoryCardSkeleton from "./_components/HistoryCardSkeleton";
 
 export default async function page() {
   // Get agent and active MSISDN from cookies
@@ -43,56 +45,54 @@ export default async function page() {
   return (
     <div>
       <div className="flex p-8">
-        <div className="ml-4 mr-4 w-full">
-          <div className="text-econetBlue mb-4">
-            <p>Home &gt; History</p>
-          </div>
+        <div className="ml-4 mr-4 w-full mt-16">
           <p className="text-econetBlue text-3xl font-bold">
             Transaction History
           </p>
           <p className="mt-4 mb-8">
             Track your E-Bucks earnings and redemptions
           </p>
+          <div className="flex justify-center gap-4 mb-8 ">
+            <Suspense fallback={<HistoryCardSkeleton />}>
+              <Card className="w-1/3">
+                <CardContent className="flex justify-between ">
+                  <div className="flex flex-col space-y-1  mt-9">
+                    <p className="font-bold">Total Earned</p>
+                    <p className="text-green-500 text-2xl font-bold">
+                      {currentEbucksBalance}
+                    </p>
+                    <p>E-Bucks</p>
+                  </div>
+                  <TrendingUp className="text-green-500 mt-16" />
+                </CardContent>
+              </Card>
 
-          <div className="flex justify-center gap-4 mb-8">
-            <Card className="w-1/3">
-              <CardContent className="flex justify-between ">
-                <div className="flex flex-col space-y-1  mt-9">
-                  <p className="font-bold">Total Earned</p>
-                  <p className="text-green-500 text-2xl font-bold">
-                    {currentEbucksBalance}
-                  </p>
-                  <p>E-Bucks</p>
-                </div>
-                <TrendingUp className="text-green-500 mt-16" />
-              </CardContent>
-            </Card>
+              <Card className="w-1/3">
+                <CardContent className="flex justify-between  ">
+                  <div className="flex flex-col space-y-1 mt-9">
+                    <p className="font-bold">Total Redeemed</p>
+                    <p className="text-red-500 text-2xl font-bold">
+                      {totalRedeemed}
+                    </p>
+                    <p>E-Bucks</p>
+                  </div>
+                  <TrendingDown className="text-red-500 mt-16" />
+                </CardContent>
+              </Card>
 
-            <Card className="w-1/3">
-              <CardContent className="flex justify-between  ">
-                <div className="flex flex-col space-y-1 mt-9">
-                  <p className="font-bold">Total Redeemed</p>
-                  <p className="text-red-500 text-2xl font-bold">
-                    {totalRedeemed}
-                  </p>
-                  <p>E-Bucks</p>
-                </div>
-                <TrendingDown className="text-red-500 mt-16" />
-              </CardContent>
-            </Card>
-
-            <Card className="w-1/3">
-              <CardContent className="flex justify-between  ">
-                <div className="flex flex-col space-y-1 mt-9">
-                  <p className="font-bold">Current Balance</p>
-                  <p className="text-blue-500 text-2xl font-bold">
-                    {remainingBalance}
-                  </p>
-                  <p>E-Bucks</p>
-                </div>
-                <LayoutPanelLeft className="text-blue-500 mt-16" />
-              </CardContent>
-            </Card>
+              <Card className="w-1/3">
+                <CardContent className="flex justify-between  ">
+                  <div className="flex flex-col space-y-1 mt-9">
+                    <p className="font-bold">Current Balance</p>
+                    <p className="text-blue-500 text-2xl font-bold">
+                      {remainingBalance}
+                    </p>
+                    <p>E-Bucks</p>
+                  </div>
+                  <LayoutPanelLeft className="text-blue-500 mt-16" />
+                </CardContent>
+              </Card>
+            </Suspense>
           </div>
           {/* Recent Transactions */}
           <TranTable
