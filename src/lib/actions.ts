@@ -2,11 +2,11 @@
 
 import { cookies } from "next/headers";
 import { Models } from "appwrite";
-import { z } from "zod";
+import { z, ZodError } from "zod";
 import { createAdminClient, createSessionClient } from "@/appwrite/config";
 import { revalidatePath } from "next/cache";
-import { getErrorMessage } from "@/lib/utils";
-import { Query } from "node-appwrite";
+import { AppwriteException, Query } from "node-appwrite";
+import { redirect } from "next/navigation";
 
 const formSchema = z.object({
   email: z.email(),
@@ -59,20 +59,39 @@ export async function createSession(formData: FormData) {
         });
       }
     } catch (error) {
+      let warningMessage =
+        "Login successful, but failed to set default MSISDN.";
+      if (error instanceof AppwriteException) {
+        warningMessage =
+          "Login successful, but failed to retrieve user details to set default MSISDN.";
+      }
       return {
         success: true,
-        warning:
-          "Login successful, but failed to set default MSISDN: " +
-          getErrorMessage(error),
+        warning: warningMessage,
       };
     }
 
     return { success: true };
   } catch (error) {
-    // This is the catch-all for any error, including validation.
+    if (error instanceof ZodError) {
+      return {
+        success: false,
+        error: "Invalid form data. Please check your email and password.",
+      };
+    } else if (error instanceof AppwriteException) {
+      if (error.code === 400 || error.code === 401) {
+        return { success: false, error: "Invalid email or password." };
+      }
+      return {
+        success: false,
+        error:
+          "An error occurred with the authentication service. Please try again later.",
+      };
+    }
+
     return {
       success: false,
-      error: getErrorMessage(error),
+      error: "An unexpected error occurred. Please try again.",
     };
   }
 }
@@ -147,12 +166,30 @@ export async function setActiveMsisdn(msisdn: string) {
 }
 
 /**
- * Gets the active MSISDN from cookie.
- * @returns The active MSISDN string, or null if not set
+ * Logs the user out by deleting the session.
  */
-export async function getActiveMsisdnFromCookie() {
-  const activeMsisdnCookie = cookies().get("active_msisdn");
-  return activeMsisdnCookie?.value || null;
+export async function signOut() {
+  try {
+    const sessionCookie = cookies().get("session");
+    if (!sessionCookie) {
+      return; // Already logged out
+    }
+    const { account } = await createSessionClient(sessionCookie.value);
+    //@deprecated — Use the object parameter style method for a better developer experience.
+    await account.deleteSession({ sessionId: "current" });
+
+    // Clear cookies
+    cookies().delete("session");
+    cookies().delete("active_msisdn");
+  } catch (error) {
+    console.error("Error signing out:", error);
+    // Even if Appwrite fails, try to clear cookies
+    cookies().delete("session");
+    cookies().delete("active_msisdn");
+  }
+
+  // Redirect to login page
+  redirect("/log-in");
 }
 
 // export async function processExcelFile(

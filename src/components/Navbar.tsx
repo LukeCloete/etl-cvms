@@ -1,10 +1,9 @@
-
-
 import Link from "next/link";
 import COMPANY_LOGO from "../public/etl-logo.png";
 import Image from "next/image";
-import NavbarUserContent from "./NavbarUserContent";
-import { Agents } from "@/lib/definitions";
+import { Suspense } from "react";
+import { LoadingSkeleton } from "./NavbarUserContent";
+import NavbarUserContentWrapper from "./NavbarUserContentWrapper";
 
 // Define the links
 const Links = [
@@ -13,13 +12,7 @@ const Links = [
   { name: "History", href: "/history" },
 ];
 
-export default function Navbar({ 
-  agent, 
-  activeMsisdn 
-}: { 
-  agent: Agents | null;
-  activeMsisdn: string | null;
-}) {
+export default function Navbar() {
   return (
     <nav className="fixed top-0 px-8 py-2 w-full flex items-center justify-center h-fit z-50">
       <div className="px-2 bg-white flex justify-between rounded-lg border border-blue-800/20 shadow-md shadow-blue-800/20 w-full">
@@ -34,18 +27,17 @@ export default function Navbar({
           </div>
           <div className="flex items-center justify-center gap-2 font-semibold text-econetBlue space-x-3">
             {Links.map((link, index) => (
-              <Link
-                key={index}
-                href={link.href}
-              >
+              <Link key={index} href={link.href}>
                 {link.name}
               </Link>
             ))}
           </div>
         </div>
 
-        {/* Dynamic Data passed as prop */}
-        <NavbarUserContent agent={agent} activeMsisdn={activeMsisdn} />
+        {/* User content with Suspense boundary */}
+        <Suspense fallback={<LoadingSkeleton />}>
+          <NavbarUserContentWrapper />
+        </Suspense>
       </div>
     </nav>
   );
