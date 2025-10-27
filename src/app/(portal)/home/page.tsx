@@ -33,7 +33,7 @@ export default async function Page() {
     <div>
       <div className="flex p-8 gap-8 ">
         <div className="w-full flex flex-col gap-8">
-          <p className="text-econetBlue text-3xl font-bold">
+          <p className="text-econetBlue text-3xl font-bold mt-16">
             Welcome {agent.name || "Agent"}
           </p>
 

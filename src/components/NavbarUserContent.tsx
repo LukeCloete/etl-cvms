@@ -12,13 +12,21 @@ import {
 } from "./ui/select";
 import { Agents } from "@/lib/definitions";
 import Link from "next/link";
-import { setActiveMsisdn } from "@/lib/actions";
+import { setActiveMsisdn, signOut } from "@/lib/actions";
 import { useTransition } from "react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
-export default function NavbarUserContent({ 
+export default function NavbarUserContent({
   agent,
-  activeMsisdn 
-}: { 
+  activeMsisdn,
+}: {
   agent: Agents | null;
   activeMsisdn: string | null;
 }) {
@@ -52,7 +60,24 @@ export default function NavbarUserContent({
 
   return (
     <div className="flex items-center justify-center gap-2">
-      <Bell width={18} height={18} />
+      <DropdownMenu>
+        <DropdownMenuTrigger>
+          <div className="flex items-center justify-center gap-2 p-2">
+            <Bell width={18} height={18} />
+          </div>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuLabel className="text-gray-600">
+            Notifications
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+
+          <DropdownMenuItem className="text-gray-400">
+            No new notifications
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
       <div className="flex items-center justify-center gap-2 rounded-full p-2">
         <Select
           onValueChange={handleMsisdnChange}
@@ -78,18 +103,42 @@ export default function NavbarUserContent({
           </SelectContent>
         </Select>
       </div>
-      <User />
+      <DropdownMenu>
+        <DropdownMenuTrigger>
+          <div className="flex items-center justify-center rounded-full bg-econetBlue text-econetWhite w-8 h-8">
+            <p>{agent.name.split("")[0]}</p>
+          </div>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuLabel className="text-gray-600">
+            {agent.name.split(" ")[0]}
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>
+            <Link href="/profile">View Profile</Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onSelect={() => {
+              startTransition(async () => {
+                await signOut();
+              });
+            }}
+            className="font-bold text-red-500"
+          >
+            Sign Out
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 }
 
 export const LoadingSkeleton = () => (
-  <div className="flex items-center justify-center gap-2 animate-pulse">
+  <div className="flex items-center justify-center gap-2 p-2 animate-pulse">
     <div className="w-6 h-6 bg-gray-200 rounded-full"></div>
-    <div className="flex items-center justify-center gap-2 rounded-full p-2">
-      <div className="w-24 h-8 bg-gray-200 rounded-full"></div>
-      <div className="w-16 h-6 bg-gray-200 rounded-full"></div>
-    </div>
+
+    <div className="w-24 h-10 bg-gray-200 rounded-full"></div>
+
     <div className="w-6 h-6 bg-gray-200 rounded-full"></div>
   </div>
 );

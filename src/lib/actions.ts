@@ -6,6 +6,7 @@ import { z, ZodError } from "zod";
 import { createAdminClient, createSessionClient } from "@/appwrite/config";
 import { revalidatePath } from "next/cache";
 import { AppwriteException, Query } from "node-appwrite";
+import { redirect } from "next/navigation";
 
 const formSchema = z.object({
   email: z.email(),
@@ -165,12 +166,30 @@ export async function setActiveMsisdn(msisdn: string) {
 }
 
 /**
- * Gets the active MSISDN from cookie.
- * @returns The active MSISDN string, or null if not set
+ * Logs the user out by deleting the session.
  */
-export async function getActiveMsisdnFromCookie() {
-  const activeMsisdnCookie = cookies().get("active_msisdn");
-  return activeMsisdnCookie?.value || null;
+export async function signOut() {
+  try {
+    const sessionCookie = cookies().get("session");
+    if (!sessionCookie) {
+      return; // Already logged out
+    }
+    const { account } = await createSessionClient(sessionCookie.value);
+    //@deprecated — Use the object parameter style method for a better developer experience.
+    await account.deleteSession({ sessionId: "current" });
+
+    // Clear cookies
+    cookies().delete("session");
+    cookies().delete("active_msisdn");
+  } catch (error) {
+    console.error("Error signing out:", error);
+    // Even if Appwrite fails, try to clear cookies
+    cookies().delete("session");
+    cookies().delete("active_msisdn");
+  }
+
+  // Redirect to login page
+  redirect("/log-in");
 }
 
 // export async function processExcelFile(
