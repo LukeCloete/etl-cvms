@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import ProfileCard from "@/components/ProfileCard";
 import { getAgentWithActiveMsisdn } from "@/lib/getAgent";
 import {
@@ -13,12 +14,25 @@ import { Bell, Shield, User } from "lucide-react";
 export default async function page() {
   const data = await getAgentWithActiveMsisdn();
   const agent = data?.agent;
+  // 1. Get the date string, defaulting to an empty string if null/undefined
   const agentCreationDate = agent?.$createdAt || "";
-  const dateObject = new Date(agentCreationDate);
-  const memberSince = new Intl.DateTimeFormat("en-US", {
-    month: "long",
-    year: "numeric",
-  }).format(dateObject);
+
+  let memberSince = "N/A"; // Set a safe default value for the UI
+
+  if (agentCreationDate) {
+    // 2. Attempt to create the Date object
+    const dateObject = new Date(agentCreationDate);
+
+    // 3. **CRITICAL CHECK**: Validate if the Date object is actually a valid time value.
+    // If the date string was bad (e.g., ""), dateObject.getTime() returns NaN.
+    if (!isNaN(dateObject.getTime())) {
+      // 4. Only format the date if it's valid
+      memberSince = new Intl.DateTimeFormat("en-US", {
+        month: "long",
+        year: "numeric",
+      }).format(dateObject);
+    }
+  }
   return (
     <div>
       <div className="flex p-8 mt-16">
@@ -119,21 +133,21 @@ export default async function page() {
                     <p className="font-bold">E-Bucks Earned</p>
                     <p>Get notified when you earn E-Bucks</p>
                   </div>
-                  <Switch id="ebucks-earned" />
+                  <Switch disabled id="ebucks-earned" />
                 </div>
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="font-bold">Reward Redemptions</p>
                     <p>Confirmation of successful redemptions</p>
                   </div>
-                  <Switch id="reward-redemptions" />
+                  <Switch disabled id="reward-redemptions" />
                 </div>
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="font-bold">Promotion Offers</p>
                     <p>Special deals and additional E-Buck opportunities</p>
                   </div>
-                  <Switch id="promotion-offers" />
+                  <Switch disabled id="promotion-offers" />
                 </div>
               </div>
             </CardContent>
