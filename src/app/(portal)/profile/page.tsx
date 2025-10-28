@@ -1,4 +1,6 @@
+export const dynamic = "force-dynamic";
 import ProfileCard from "@/components/ProfileCard";
+import { getAgentWithActiveMsisdn } from "@/lib/getAgent";
 import {
   Card,
   CardContent,
@@ -6,17 +8,36 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
 import { Bell, Shield, User } from "lucide-react";
 
-export default function page() {
+export default async function page() {
+  const data = await getAgentWithActiveMsisdn();
+  const agent = data?.agent;
+  // 1. Get the date string, defaulting to an empty string if null/undefined
+  const agentCreationDate = agent?.$createdAt || "";
+
+  let memberSince = "N/A"; // Set a safe default value for the UI
+
+  if (agentCreationDate) {
+    // 2. Attempt to create the Date object
+    const dateObject = new Date(agentCreationDate);
+
+    // 3. **CRITICAL CHECK**: Validate if the Date object is actually a valid time value.
+    // If the date string was bad (e.g., ""), dateObject.getTime() returns NaN.
+    if (!isNaN(dateObject.getTime())) {
+      // 4. Only format the date if it's valid
+      memberSince = new Intl.DateTimeFormat("en-US", {
+        month: "long",
+        year: "numeric",
+      }).format(dateObject);
+    }
+  }
   return (
     <div>
-      <div className="flex p-8">
+      <div className="flex p-8 mt-16">
         <div className="w-3/4 mr-12 ml-4">
-          <div className="text-econetBlue mb-4">
-            <p>Home &gt; Profile</p>
-          </div>
-          <p className="text-econetBlue text-3xl font-bold">My Profile</p>
+          <p className="text-econetBlue text-3xl font-bold ">My Profile</p>
           <p className="mt-4 mb-8">Manage your account information</p>
 
           {/* Personal Information */}
@@ -37,11 +58,11 @@ export default function page() {
               <div className="flex border-2 border-solid p-2 mb-2 rounded-lg">
                 <div className="w-1/2">
                   <p className="font-bold">First Name</p>
-                  <p>Dennis</p>
+                  <p>{agent?.name || "Agent Name"}</p>
                 </div>
                 <div>
-                  <p className="font-bold">Last Name</p>
-                  <p>Plaatjies</p>
+                  <p className="font-bold">Surname</p>
+                  <p>Agent Surname</p>
                 </div>
               </div>
               {/* Second row: phone number and email address */}
@@ -105,19 +126,28 @@ export default function page() {
                 Choose how you want to receive notifications
               </CardDescription>
             </CardHeader>
-            <CardContent className="flex flex-col gap-4">
-              <div className="flex flex-col p-2 ">
-                <div className="mb-4">
-                  <p className="font-bold">E-Bucks Earned</p>
-                  <p>Get notified when you earn E-Bucks</p>
+            <CardContent>
+              <div className="space-y-6 p-2">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-bold">E-Bucks Earned</p>
+                    <p>Get notified when you earn E-Bucks</p>
+                  </div>
+                  <Switch disabled id="ebucks-earned" />
                 </div>
-                <div className="mb-4">
-                  <p className="font-bold">Reward Redemptions</p>
-                  <p>Confirmation of successful redemptions</p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-bold">Reward Redemptions</p>
+                    <p>Confirmation of successful redemptions</p>
+                  </div>
+                  <Switch disabled id="reward-redemptions" />
                 </div>
-                <div className="mb-4">
-                  <p className="font-bold">Promotion Offers</p>
-                  <p>Special deals and additional E-Buck opportunities</p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-bold">Promotion Offers</p>
+                    <p>Special deals and additional E-Buck opportunities</p>
+                  </div>
+                  <Switch disabled id="promotion-offers" />
                 </div>
               </div>
             </CardContent>
@@ -126,10 +156,10 @@ export default function page() {
 
         {/* Profile card */}
         <ProfileCard
-          name={"Agent Name"}
+          name={agent?.name || "Agent Name"}
           tier={"Gold"}
           phoneNumber={"+266 123 4567"}
-          memberSinceDate={"January 2025"}
+          memberSinceDate={memberSince}
         ></ProfileCard>
       </div>
     </div>

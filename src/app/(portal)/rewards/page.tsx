@@ -30,7 +30,7 @@ export default async function page() {
 
   return (
     <div>
-      <div className="flex p-8 ">
+      <div className="flex p-8 mt-16">
         <div className="w-1/5 flex flex-col gap-4">
           <RewardProfileCard
             msisdn={activeMsisdnObj || null}
@@ -69,9 +69,9 @@ export default async function page() {
 
         <div className="w-4/5 ml-8 ">
           <div className="flex flex-col mb-4">
-            <div className="text-econetBlue mb-4">
+            {/* <div className="text-econetBlue mb-4">
               <p>Home &gt; Rewards </p>
-            </div>
+            </div> */}
             <p className=" text-econetBlue text-3xl font-bold">
               Available rewards
             </p>
