@@ -1,4 +1,5 @@
 import ProfileCard from "@/components/ProfileCard";
+import { getAgentWithActiveMsisdn } from "@/lib/getAgent";
 import {
   Card,
   CardContent,
@@ -8,15 +9,14 @@ import {
 } from "@/components/ui/card";
 import { Bell, Shield, User } from "lucide-react";
 
-export default function page() {
+export default async function page() {
+  const data = await getAgentWithActiveMsisdn();
+  const agent = data?.agent;
   return (
     <div>
-      <div className="flex p-8">
+      <div className="flex p-8 mt-16">
         <div className="w-3/4 mr-12 ml-4">
-          <div className="text-econetBlue mb-4">
-            <p>Home &gt; Profile</p>
-          </div>
-          <p className="text-econetBlue text-3xl font-bold">My Profile</p>
+          <p className="text-econetBlue text-3xl font-bold ">My Profile</p>
           <p className="mt-4 mb-8">Manage your account information</p>
 
           {/* Personal Information */}
@@ -37,11 +37,11 @@ export default function page() {
               <div className="flex border-2 border-solid p-2 mb-2 rounded-lg">
                 <div className="w-1/2">
                   <p className="font-bold">First Name</p>
-                  <p>Dennis</p>
+                  <p>{agent?.name || "Agent Name"}</p>
                 </div>
                 <div>
-                  <p className="font-bold">Last Name</p>
-                  <p>Plaatjies</p>
+                  <p className="font-bold">Surname</p>
+                  <p>Agent Surname</p>
                 </div>
               </div>
               {/* Second row: phone number and email address */}
@@ -126,7 +126,7 @@ export default function page() {
 
         {/* Profile card */}
         <ProfileCard
-          name={"Agent Name"}
+          name={agent?.name || "Agent Name"}
           tier={"Gold"}
           phoneNumber={"+266 123 4567"}
           memberSinceDate={"January 2025"}

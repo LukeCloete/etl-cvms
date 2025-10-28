@@ -17,7 +17,7 @@ export default function DashboardCard({
         <CardHeader>
           <CardTitle className="flex flex-col items-center justify-center gap-2">
             <User />
-            {name}
+            <p className="whitespace-nowrap text-base">{name}</p>
           </CardTitle>
         </CardHeader>
         <CardContent className=" flex">
