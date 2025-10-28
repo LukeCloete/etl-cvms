@@ -7,11 +7,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
 import { Bell, Shield, User } from "lucide-react";
 
 export default async function page() {
   const data = await getAgentWithActiveMsisdn();
   const agent = data?.agent;
+  const agentCreationDate = agent?.$createdAt || "";
+  const dateObject = new Date(agentCreationDate);
+  const memberSince = new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    year: "numeric",
+  }).format(dateObject);
   return (
     <div>
       <div className="flex p-8 mt-16">
@@ -105,19 +112,28 @@ export default async function page() {
                 Choose how you want to receive notifications
               </CardDescription>
             </CardHeader>
-            <CardContent className="flex flex-col gap-4">
-              <div className="flex flex-col p-2 ">
-                <div className="mb-4">
-                  <p className="font-bold">E-Bucks Earned</p>
-                  <p>Get notified when you earn E-Bucks</p>
+            <CardContent>
+              <div className="space-y-6 p-2">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-bold">E-Bucks Earned</p>
+                    <p>Get notified when you earn E-Bucks</p>
+                  </div>
+                  <Switch id="ebucks-earned" />
                 </div>
-                <div className="mb-4">
-                  <p className="font-bold">Reward Redemptions</p>
-                  <p>Confirmation of successful redemptions</p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-bold">Reward Redemptions</p>
+                    <p>Confirmation of successful redemptions</p>
+                  </div>
+                  <Switch id="reward-redemptions" />
                 </div>
-                <div className="mb-4">
-                  <p className="font-bold">Promotion Offers</p>
-                  <p>Special deals and additional E-Buck opportunities</p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-bold">Promotion Offers</p>
+                    <p>Special deals and additional E-Buck opportunities</p>
+                  </div>
+                  <Switch id="promotion-offers" />
                 </div>
               </div>
             </CardContent>
@@ -129,7 +145,7 @@ export default async function page() {
           name={agent?.name || "Agent Name"}
           tier={"Gold"}
           phoneNumber={"+266 123 4567"}
-          memberSinceDate={"January 2025"}
+          memberSinceDate={memberSince}
         ></ProfileCard>
       </div>
     </div>
