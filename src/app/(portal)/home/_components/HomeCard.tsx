@@ -18,6 +18,13 @@ interface HomeCardProps {
   eBucksTiers: Ebucks_Tiers[] | null;
 }
 
+const formatNumber = (value: number | null | undefined) => {
+  if (value === null || value === undefined) {
+    return "0";
+  }
+  return value.toLocaleString("sv-SE");
+};
+
 export default function HomeCard({ msisdn, eBucksTiers }: HomeCardProps) {
   const [progress, setProgress] = useState(0);
 
@@ -95,15 +102,16 @@ export default function HomeCard({ msisdn, eBucksTiers }: HomeCardProps) {
         <div className="flex flex-row justify-between items-center">
           <div className="flex flex-col items-start">
             <p className="text-4xl font-bold mb-2">
-              {msisdn.current_ebucks_balance ?? 0} E-Bucks
+              {formatNumber(msisdn.current_ebucks_balance)} E-Bucks
             </p>
             {eBucksToNextTier ? (
               <p className="font-bold text-white/80 text-sm">
                 Earn{" "}
                 <span className="text-amber-500">
-                  {eBucksToNextTier.min_balance_req -
-                    msisdn.current_ebucks_balance}{" "}
-                  E-Bucks
+                  {formatNumber(
+                    eBucksToNextTier.min_balance_req -
+                      msisdn.current_ebucks_balance
+                  )}{" "}
                 </span>{" "}
                 to reach the {eBucksToNextTier.tier_name} tier
               </p>

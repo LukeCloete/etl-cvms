@@ -21,6 +21,14 @@ const formatDate = (dateString: string) => {
   return date.toLocaleDateString("en-US", options);
 };
 
+const formatNumber = (value: number | null | undefined) => {
+  if (value === null || value === undefined) {
+    return "0";
+  }
+  // return value.toLocaleString("en-US");
+  return value.toLocaleString("sv-SE");
+};
+
 export default async function Cards({ activeMsisdn }: CardsProps) {
   // 1. Extract the MSISDN string for fetching
   const msisdnString = activeMsisdn!.msisdn.toString();
@@ -71,26 +79,26 @@ export default async function Cards({ activeMsisdn }: CardsProps) {
           <DashboardCard
             title={"Total Daily Data"}
             date={coreSpend?.date ? formatDate(coreSpend.date.toString()) : ""}
-            value={`${coreSpend?.total_data_usage ?? "0"} MB`}
+            value={`${formatNumber(coreSpend?.total_data_usage)} MB`}
           ></DashboardCard>
 
           <DashboardCard
             title={"Total Daily SMS"}
             date={coreSpend?.date ? formatDate(coreSpend.date.toString()) : ""}
-            value={`${coreSpend?.total_sms_usage ?? "0"} SMS`}
+            value={`${formatNumber(coreSpend?.total_sms_usage)} SMS`}
           ></DashboardCard>
 
           <DashboardCard
             title={"Total Daily Voice"}
             date={coreSpend?.date ? formatDate(coreSpend.date.toString()) : ""}
-            value={`${coreSpend?.total_voice_usage ?? "0"} Mins`}
+            value={`${formatNumber(coreSpend?.total_voice_usage)} Mins`}
           ></DashboardCard>
 
           {mostRecentCashIn && (
             <DashboardCard
               title={"Daily Transactions"}
               date={formatDate(mostRecentCashIn.txn_week.toString())}
-              value={`M${mostRecentCashIn?.weekly_value ?? "0"}`}
+              value={`M${formatNumber(mostRecentCashIn?.weekly_value)}`}
             ></DashboardCard>
           )}
         </div>
@@ -116,7 +124,7 @@ export default async function Cards({ activeMsisdn }: CardsProps) {
             <DashboardCard
               title={"Daily Cash-In"}
               date={formatDate(mostRecentCashIn.txn_week.toString())}
-              value={`M${mostRecentCashIn?.weekly_value ?? "0"} `}
+              value={`M${formatNumber(mostRecentCashIn?.weekly_value)} `}
             ></DashboardCard>
           )}
 
@@ -124,7 +132,7 @@ export default async function Cards({ activeMsisdn }: CardsProps) {
             <DashboardCard
               title={"Previous Daily Cash-In"}
               date={formatDate(mostRecentCashIn.txn_week.toString())}
-              value={`M${mostRecentCashIn?.prev_weekly_value ?? "0"}`}
+              value={`M${formatNumber(mostRecentCashIn?.prev_weekly_value)}`}
             ></DashboardCard>
           )}
         </div>
@@ -150,14 +158,14 @@ export default async function Cards({ activeMsisdn }: CardsProps) {
             <DashboardCard
               title={"Daily Cash-Out"}
               date={formatDate(mostRecentCashOut.txn_week.toString())}
-              value={`M${mostRecentCashOut?.weekly_value ?? "0"}`}
+              value={`M${formatNumber(mostRecentCashOut?.weekly_value)}`}
             ></DashboardCard>
           )}
           {mostRecentCashOut && (
             <DashboardCard
               title={"Previous Daily Cash-Out"}
               date={formatDate(mostRecentCashOut.txn_week.toString())}
-              value={`M${mostRecentCashOut?.prev_weekly_value ?? "0"}`}
+              value={`M${formatNumber(mostRecentCashOut?.prev_weekly_value)}`}
             ></DashboardCard>
           )}
         </div>
