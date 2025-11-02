@@ -1,11 +1,10 @@
 import DashboardCard from "@/components/DashboardCard";
 import PercentageCard from "./PercentageCard";
-import { Core_Spend, Msisdns, Performance_Rankings } from "@/lib/definitions";
-import { getCoreSpendData } from "@/lib/getCoreSpend";
-import { getPerformanceData } from "@/lib/getPerformance";
+import { Core_Spend, Performance_Rankings } from "@/lib/definitions";
 
 interface CardsProps {
-  activeMsisdn: Msisdns | null;
+  coreSpend: Core_Spend | null;
+  performance: Performance_Rankings[] | null;
 }
 
 const formatDate = (dateString: string) => {
@@ -29,22 +28,7 @@ const formatNumber = (value: number | null | undefined) => {
   return value.toLocaleString("sv-SE");
 };
 
-export default async function Cards({ activeMsisdn }: CardsProps) {
-  // 1. Extract the MSISDN string for fetching
-  const msisdnString = activeMsisdn!.msisdn.toString();
-
-  // 2. Fetch the data inside the component (This is where the suspendable work happens)
-  const [coreSpendData, performanceData] = await Promise.all([
-    getCoreSpendData(msisdnString),
-    getPerformanceData(msisdnString),
-  ]);
-
-  const coreSpend: Core_Spend | null =
-    (coreSpendData?.coreSpendData as unknown as Core_Spend) || null;
-  const performance: Performance_Rankings[] | null =
-    (performanceData?.performanceData as unknown as Performance_Rankings[]) ||
-    null;
-
+export default function Cards({ coreSpend, performance }: CardsProps) {
   const sortedPerformanceData: Performance_Rankings[] = performance
     ? [...performance].sort((a, b) => {
         return new Date(b.txn_week).getTime() - new Date(a.txn_week).getTime();
