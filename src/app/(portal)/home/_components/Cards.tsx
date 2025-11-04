@@ -53,13 +53,15 @@ export default function Cards({ coreSpend, performance }: CardsProps) {
           <div className="flex-1 h-[2px] bg-gradient-to-r from-econetBlue/20 to-transparent"></div>
         </div>
         <div className="flex justify-center gap-4">
-          {mostRecentCashIn && (
-            <PercentageCard
-              title={"Transaction Growth"}
-              date={formatDate(mostRecentCashIn.txn_week.toString())}
-              value={mostRecentCashIn?.txn_growth_pct}
-            />
-          )}
+          <PercentageCard
+            title={"Transaction Growth"}
+            date={
+              mostRecentCashIn
+                ? formatDate(mostRecentCashIn.txn_week.toString())
+                : ""
+            }
+            value={mostRecentCashIn?.txn_growth_pct}
+          />
           <DashboardCard
             title={"Total Daily Data"}
             date={coreSpend?.date ? formatDate(coreSpend.date.toString()) : ""}
@@ -78,13 +80,15 @@ export default function Cards({ coreSpend, performance }: CardsProps) {
             value={`${formatNumber(coreSpend?.total_voice_usage)} Mins`}
           ></DashboardCard>
 
-          {mostRecentCashIn && (
-            <DashboardCard
-              title={"Daily Transactions"}
-              date={formatDate(mostRecentCashIn.txn_week.toString())}
-              value={`M${formatNumber(mostRecentCashIn?.weekly_value)}`}
-            ></DashboardCard>
-          )}
+          <DashboardCard
+            title={"Daily Transactions"}
+            date={
+              mostRecentCashIn
+                ? formatDate(mostRecentCashIn.txn_week.toString())
+                : ""
+            }
+            value={`M${formatNumber(mostRecentCashIn?.weekly_value)}`}
+          ></DashboardCard>
         </div>
       </div>
 
@@ -97,28 +101,34 @@ export default function Cards({ coreSpend, performance }: CardsProps) {
           <div className="flex-1 h-[2px] bg-gradient-to-r from-green-600/20 to-transparent"></div>
         </div>
         <div className="flex justify-center gap-4">
-          {mostRecentCashIn && (
-            <PercentageCard
-              title={"Cash-In Value Growth"}
-              date={formatDate(mostRecentCashIn.txn_week.toString())}
-              value={mostRecentCashIn?.value_growth_pct}
-            />
-          )}
-          {mostRecentCashIn && (
-            <DashboardCard
-              title={"Daily Cash-In"}
-              date={formatDate(mostRecentCashIn.txn_week.toString())}
-              value={`M${formatNumber(mostRecentCashIn?.weekly_value)} `}
-            ></DashboardCard>
-          )}
+          <PercentageCard
+            title={"Cash-In Value Growth"}
+            date={
+              mostRecentCashIn
+                ? formatDate(mostRecentCashIn.txn_week.toString())
+                : ""
+            }
+            value={mostRecentCashIn?.value_growth_pct}
+          />
+          <DashboardCard
+            title={"Daily Cash-In"}
+            date={
+              mostRecentCashIn
+                ? formatDate(mostRecentCashIn.txn_week.toString())
+                : ""
+            }
+            value={`M${formatNumber(mostRecentCashIn?.weekly_value)} `}
+          ></DashboardCard>
 
-          {mostRecentCashIn && (
-            <DashboardCard
-              title={"Previous Daily Cash-In"}
-              date={formatDate(mostRecentCashIn.txn_week.toString())}
-              value={`M${formatNumber(mostRecentCashIn?.prev_weekly_value)}`}
-            ></DashboardCard>
-          )}
+          <DashboardCard
+            title={"Previous Daily Cash-In"}
+            date={
+              mostRecentCashIn
+                ? formatDate(mostRecentCashIn.txn_week.toString())
+                : ""
+            }
+            value={`M${formatNumber(mostRecentCashIn?.prev_weekly_value)}`}
+          ></DashboardCard>
         </div>
       </div>
 
@@ -131,27 +141,33 @@ export default function Cards({ coreSpend, performance }: CardsProps) {
           <div className="flex-1 h-[2px] bg-gradient-to-r from-orange-600/20 to-transparent"></div>
         </div>
         <div className="flex justify-center gap-4">
-          {mostRecentCashOut && (
-            <PercentageCard
-              title={"Cash-Out Value Growth"}
-              date={formatDate(mostRecentCashOut.txn_week.toString())}
-              value={mostRecentCashOut?.value_growth_pct}
-            />
-          )}
-          {mostRecentCashOut && (
-            <DashboardCard
-              title={"Daily Cash-Out"}
-              date={formatDate(mostRecentCashOut.txn_week.toString())}
-              value={`M${formatNumber(mostRecentCashOut?.weekly_value)}`}
-            ></DashboardCard>
-          )}
-          {mostRecentCashOut && (
-            <DashboardCard
-              title={"Previous Daily Cash-Out"}
-              date={formatDate(mostRecentCashOut.txn_week.toString())}
-              value={`M${formatNumber(mostRecentCashOut?.prev_weekly_value)}`}
-            ></DashboardCard>
-          )}
+          <PercentageCard
+            title={"Cash-Out Value Growth"}
+            date={
+              mostRecentCashOut
+                ? formatDate(mostRecentCashOut.txn_week.toString())
+                : ""
+            }
+            value={mostRecentCashOut?.value_growth_pct}
+          />
+          <DashboardCard
+            title={"Daily Cash-Out"}
+            date={
+              mostRecentCashOut
+                ? formatDate(mostRecentCashOut.txn_week.toString())
+                : ""
+            }
+            value={`M${formatNumber(mostRecentCashOut?.weekly_value)}`}
+          ></DashboardCard>
+          <DashboardCard
+            title={"Previous Daily Cash-Out"}
+            date={
+              mostRecentCashOut
+                ? formatDate(mostRecentCashOut.txn_week.toString())
+                : ""
+            }
+            value={`M${formatNumber(mostRecentCashOut?.prev_weekly_value)}`}
+          ></DashboardCard>
         </div>
       </div>
     </div>
