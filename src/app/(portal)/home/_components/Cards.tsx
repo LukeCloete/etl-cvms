@@ -1,11 +1,10 @@
 import DashboardCard from "@/components/DashboardCard";
 import PercentageCard from "./PercentageCard";
-import { Core_Spend, Msisdns, Performance_Rankings } from "@/lib/definitions";
-import { getCoreSpendData } from "@/lib/getCoreSpend";
-import { getPerformanceData } from "@/lib/getPerformance";
+import { Core_Spend, Performance_Rankings } from "@/lib/definitions";
 
 interface CardsProps {
-  activeMsisdn: Msisdns | null;
+  coreSpend: Core_Spend | null;
+  performance: Performance_Rankings[] | null;
 }
 
 const formatDate = (dateString: string) => {
@@ -21,22 +20,15 @@ const formatDate = (dateString: string) => {
   return date.toLocaleDateString("en-US", options);
 };
 
-export default async function Cards({ activeMsisdn }: CardsProps) {
-  // 1. Extract the MSISDN string for fetching
-  const msisdnString = activeMsisdn!.msisdn.toString();
+const formatNumber = (value: number | null | undefined) => {
+  if (value === null || value === undefined) {
+    return "0";
+  }
+  // return value.toLocaleString("en-US");
+  return value.toLocaleString("sv-SE");
+};
 
-  // 2. Fetch the data inside the component (This is where the suspendable work happens)
-  const [coreSpendData, performanceData] = await Promise.all([
-    getCoreSpendData(msisdnString),
-    getPerformanceData(msisdnString),
-  ]);
-
-  const coreSpend: Core_Spend | null =
-    (coreSpendData?.coreSpendData as unknown as Core_Spend) || null;
-  const performance: Performance_Rankings[] | null =
-    (performanceData?.performanceData as unknown as Performance_Rankings[]) ||
-    null;
-
+export default function Cards({ coreSpend, performance }: CardsProps) {
   const sortedPerformanceData: Performance_Rankings[] = performance
     ? [...performance].sort((a, b) => {
         return new Date(b.txn_week).getTime() - new Date(a.txn_week).getTime();
@@ -61,38 +53,42 @@ export default async function Cards({ activeMsisdn }: CardsProps) {
           <div className="flex-1 h-[2px] bg-gradient-to-r from-econetBlue/20 to-transparent"></div>
         </div>
         <div className="flex justify-center gap-4">
-          {mostRecentCashIn && (
-            <PercentageCard
-              title={"Transaction Growth"}
-              date={formatDate(mostRecentCashIn.txn_week.toString())}
-              value={mostRecentCashIn?.txn_growth_pct}
-            />
-          )}
+          <PercentageCard
+            title={"Transaction Growth"}
+            date={
+              mostRecentCashIn
+                ? formatDate(mostRecentCashIn.txn_week.toString())
+                : ""
+            }
+            value={mostRecentCashIn?.txn_growth_pct}
+          />
           <DashboardCard
             title={"Total Daily Data"}
             date={coreSpend?.date ? formatDate(coreSpend.date.toString()) : ""}
-            value={`${coreSpend?.total_data_usage ?? "0"} MB`}
+            value={`${formatNumber(coreSpend?.total_data_usage)} MB`}
           ></DashboardCard>
 
           <DashboardCard
             title={"Total Daily SMS"}
             date={coreSpend?.date ? formatDate(coreSpend.date.toString()) : ""}
-            value={`${coreSpend?.total_sms_usage ?? "0"} SMS`}
+            value={`${formatNumber(coreSpend?.total_sms_usage)} SMS`}
           ></DashboardCard>
 
           <DashboardCard
             title={"Total Daily Voice"}
             date={coreSpend?.date ? formatDate(coreSpend.date.toString()) : ""}
-            value={`${coreSpend?.total_voice_usage ?? "0"} Mins`}
+            value={`${formatNumber(coreSpend?.total_voice_usage)} Mins`}
           ></DashboardCard>
 
-          {mostRecentCashIn && (
-            <DashboardCard
-              title={"Daily Transactions"}
-              date={formatDate(mostRecentCashIn.txn_week.toString())}
-              value={`M${mostRecentCashIn?.weekly_value ?? "0"}`}
-            ></DashboardCard>
-          )}
+          <DashboardCard
+            title={"Daily Transactions"}
+            date={
+              mostRecentCashIn
+                ? formatDate(mostRecentCashIn.txn_week.toString())
+                : ""
+            }
+            value={`M${formatNumber(mostRecentCashIn?.weekly_value)}`}
+          ></DashboardCard>
         </div>
       </div>
 
@@ -105,28 +101,34 @@ export default async function Cards({ activeMsisdn }: CardsProps) {
           <div className="flex-1 h-[2px] bg-gradient-to-r from-green-600/20 to-transparent"></div>
         </div>
         <div className="flex justify-center gap-4">
-          {mostRecentCashIn && (
-            <PercentageCard
-              title={"Cash-In Value Growth"}
-              date={formatDate(mostRecentCashIn.txn_week.toString())}
-              value={mostRecentCashIn?.value_growth_pct}
-            />
-          )}
-          {mostRecentCashIn && (
-            <DashboardCard
-              title={"Daily Cash-In"}
-              date={formatDate(mostRecentCashIn.txn_week.toString())}
-              value={`M${mostRecentCashIn?.weekly_value ?? "0"} `}
-            ></DashboardCard>
-          )}
+          <PercentageCard
+            title={"Cash-In Value Growth"}
+            date={
+              mostRecentCashIn
+                ? formatDate(mostRecentCashIn.txn_week.toString())
+                : ""
+            }
+            value={mostRecentCashIn?.value_growth_pct}
+          />
+          <DashboardCard
+            title={"Daily Cash-In"}
+            date={
+              mostRecentCashIn
+                ? formatDate(mostRecentCashIn.txn_week.toString())
+                : ""
+            }
+            value={`M${formatNumber(mostRecentCashIn?.weekly_value)} `}
+          ></DashboardCard>
 
-          {mostRecentCashIn && (
-            <DashboardCard
-              title={"Previous Daily Cash-In"}
-              date={formatDate(mostRecentCashIn.txn_week.toString())}
-              value={`M${mostRecentCashIn?.prev_weekly_value ?? "0"}`}
-            ></DashboardCard>
-          )}
+          <DashboardCard
+            title={"Previous Daily Cash-In"}
+            date={
+              mostRecentCashIn
+                ? formatDate(mostRecentCashIn.txn_week.toString())
+                : ""
+            }
+            value={`M${formatNumber(mostRecentCashIn?.prev_weekly_value)}`}
+          ></DashboardCard>
         </div>
       </div>
 
@@ -139,27 +141,33 @@ export default async function Cards({ activeMsisdn }: CardsProps) {
           <div className="flex-1 h-[2px] bg-gradient-to-r from-orange-600/20 to-transparent"></div>
         </div>
         <div className="flex justify-center gap-4">
-          {mostRecentCashOut && (
-            <PercentageCard
-              title={"Cash-Out Value Growth"}
-              date={formatDate(mostRecentCashOut.txn_week.toString())}
-              value={mostRecentCashOut?.value_growth_pct}
-            />
-          )}
-          {mostRecentCashOut && (
-            <DashboardCard
-              title={"Daily Cash-Out"}
-              date={formatDate(mostRecentCashOut.txn_week.toString())}
-              value={`M${mostRecentCashOut?.weekly_value ?? "0"}`}
-            ></DashboardCard>
-          )}
-          {mostRecentCashOut && (
-            <DashboardCard
-              title={"Previous Daily Cash-Out"}
-              date={formatDate(mostRecentCashOut.txn_week.toString())}
-              value={`M${mostRecentCashOut?.prev_weekly_value ?? "0"}`}
-            ></DashboardCard>
-          )}
+          <PercentageCard
+            title={"Cash-Out Value Growth"}
+            date={
+              mostRecentCashOut
+                ? formatDate(mostRecentCashOut.txn_week.toString())
+                : ""
+            }
+            value={mostRecentCashOut?.value_growth_pct}
+          />
+          <DashboardCard
+            title={"Daily Cash-Out"}
+            date={
+              mostRecentCashOut
+                ? formatDate(mostRecentCashOut.txn_week.toString())
+                : ""
+            }
+            value={`M${formatNumber(mostRecentCashOut?.weekly_value)}`}
+          ></DashboardCard>
+          <DashboardCard
+            title={"Previous Daily Cash-Out"}
+            date={
+              mostRecentCashOut
+                ? formatDate(mostRecentCashOut.txn_week.toString())
+                : ""
+            }
+            value={`M${formatNumber(mostRecentCashOut?.prev_weekly_value)}`}
+          ></DashboardCard>
         </div>
       </div>
     </div>

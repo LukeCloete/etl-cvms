@@ -1,10 +1,17 @@
-import { Msisdns, Ebucks_Tiers } from "@/lib/definitions";
-import Cards from "./_components/Cards";
+import {
+  Msisdns,
+  Ebucks_Tiers,
+  Core_Spend,
+  Performance_Rankings,
+} from "@/lib/definitions";
+import FilteredCards from "./_components/FilteredCards";
 import HomeCard from "./_components/HomeCard";
 import HomeCardSkeleton from "./_components/HomeCardSkeleton";
 import CardsSkeleton from "./_components/CardsSkeleton";
 import { getAgentWithActiveMsisdn } from "@/lib/getAgent";
 import { getEbucksTiers } from "@/lib/getEbucksTiers";
+import { getCoreSpendData } from "@/lib/getCoreSpend";
+import { getPerformanceData } from "@/lib/getPerformance";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
@@ -18,11 +25,22 @@ export default async function Page() {
 
   const { agent, activeMsisdn } = data;
 
-  // Fetch all data in parallel
-  const ebucksTiersData = await getEbucksTiers();
+  // Fetch all page data in parallel for better performance
+  const [ebucksTiersData, coreSpendData, performanceData] = await Promise.all([
+    getEbucksTiers(),
+    getCoreSpendData(activeMsisdn!),
+    getPerformanceData(activeMsisdn!),
+  ]);
 
   const ebucksTiers: Ebucks_Tiers[] =
     (ebucksTiersData?.ebucks_tiers as unknown as Ebucks_Tiers[]) || [];
+
+  // Safely extract the full datasets for the cards
+  const allCoreSpend: Core_Spend[] =
+    (coreSpendData?.coreSpendData as unknown as Core_Spend[]) || [];
+  const allPerformance: Performance_Rankings[] =
+    (performanceData?.performanceData as unknown as Performance_Rankings[]) ||
+    [];
 
   // Find the active MSISDN object
   const activeMsisdnObj: Msisdns | undefined = agent.msisdns.find(
@@ -45,7 +63,10 @@ export default async function Page() {
           </Suspense>
 
           <Suspense fallback={<CardsSkeleton />}>
-            <Cards activeMsisdn={activeMsisdnObj || null} />
+            <FilteredCards
+              initialCoreSpend={allCoreSpend}
+              initialPerformance={allPerformance}
+            />
           </Suspense>
         </div>
       </div>

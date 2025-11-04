@@ -117,6 +117,9 @@ export default function NavbarUserContent({
           <DropdownMenuItem>
             <Link href="/profile">View Profile</Link>
           </DropdownMenuItem>
+          <DropdownMenuItem>
+            <Link href="/update-password">Update Password</Link>
+          </DropdownMenuItem>
           <DropdownMenuItem
             onSelect={() => {
               startTransition(async () => {
