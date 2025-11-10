@@ -1,12 +1,5 @@
-import {
-  Msisdns,
-  Ebucks_Tiers,
-  Core_Spend,
-  Performance_Rankings,
-  Agent_Weekly_Performance,
-} from "@/lib/definitions";
+import { Msisdns, Ebucks_Tiers } from "@/lib/definitions";
 import { WeeklyPerformance } from "./_components/WeeklyPerformance";
-import FilteredCards from "./_components/FilteredCards";
 import HomeCard from "./_components/HomeCard";
 import HomeCardSkeleton from "./_components/HomeCardSkeleton";
 import CardsSkeleton from "./_components/CardsSkeleton";
@@ -31,12 +24,7 @@ export default async function Page() {
   const { agent, activeMsisdn } = data;
 
   // Fetch all page data in parallel for better performance
-  const [
-    ebucksTiersData,
-    coreSpendData,
-    performanceData,
-    agentWeeklyPerformanceData,
-  ] = await Promise.all([
+  const [ebucksTiersData, agentWeeklyPerformanceData] = await Promise.all([
     getEbucksTiers(),
     getCoreSpendData(activeMsisdn!),
     getPerformanceData(activeMsisdn!),
@@ -47,11 +35,11 @@ export default async function Page() {
     (ebucksTiersData?.ebucks_tiers as unknown as Ebucks_Tiers[]) || [];
 
   // Safely extract the full datasets for the cards
-  const allCoreSpend: Core_Spend[] =
-    (coreSpendData?.coreSpendData as unknown as Core_Spend[]) || [];
-  const allPerformance: Performance_Rankings[] =
-    (performanceData?.performanceData as unknown as Performance_Rankings[]) ||
-    [];
+  // const allCoreSpend: Core_Spend[] =
+  //   (coreSpendData?.coreSpendData as unknown as Core_Spend[]) || [];
+  // const allPerformance: Performance_Rankings[] =
+  //   (performanceData?.performanceData as unknown as Performance_Rankings[]) ||
+  //   [];
 
   // Find the active MSISDN object
   const activeMsisdnObj: Msisdns | undefined = agent.msisdns.find(
@@ -65,17 +53,18 @@ export default async function Page() {
           <p className="text-econetBlue text-3xl font-bold mt-16">
             Welcome {agent.name || "Agent"}
           </p>
-
           <Suspense fallback={<HomeCardSkeleton />}>
             <HomeCard
               msisdn={activeMsisdnObj || null}
               eBucksTiers={ebucksTiers}
             />
           </Suspense>
-
-                    <Suspense fallback={<CardsSkeleton />}>
-                      <WeeklyPerformance weeklyPerformanceData={agentWeeklyPerformanceData} />
-                    </Suspense>        </div>
+          <Suspense fallback={<CardsSkeleton />}>
+            <WeeklyPerformance
+              weeklyPerformanceData={agentWeeklyPerformanceData}
+            />
+          </Suspense>{" "}
+        </div>
       </div>
     </div>
   );

@@ -75,7 +75,7 @@ export function WeeklyPerformance({
         <TabsTrigger value="last-7-days">Last 7 Days</TabsTrigger>
       </TabsList>
       <TabsContent value="today">
-        <p>Today's data is not yet available.</p>
+        <p>Today&apos;s data is not yet available.</p>
       </TabsContent>
       <TabsContent value="last-7-days">
         {performance ? (
