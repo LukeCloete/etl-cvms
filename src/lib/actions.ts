@@ -166,6 +166,116 @@ export async function setActiveMsisdn(msisdn: string) {
 }
 
 /**
+ * Updates the user's profile information (name and phone number).
+ * Requires the user's current password to confirm changes.
+ */
+export async function updateProfile(
+  prevState: { message: string },
+  formData: FormData
+) {
+  const sessionCookie = cookies().get("session");
+  if (!sessionCookie) {
+    return { message: "Not authenticated" };
+  }
+
+  try {
+    const { account } = await createSessionClient(sessionCookie.value);
+    const user = await account.get(); // Get current user to check existing data
+
+    const name = formData.get("name") as string;
+    const phone = formData.get("phone") as string;
+    const email = formData.get("email") as string; // Get email from form data
+    const password = formData.get("password") as string;
+
+    if (!password) {
+      return { message: "Password is required to confirm changes." };
+    }
+
+    // Update name if it has changed
+    if (name && name !== user.name) {
+      await account.updateName({ name });
+    }
+
+    // Update phone if it has changed
+    if (phone && phone !== user.phone) {
+      await account.updatePhone({ phone, password });
+    }
+
+    // Update email if it has changed
+    if (email && email !== user.email) {
+      await account.updateEmail({ email, password });
+    }
+
+    revalidatePath("/profile");
+    return { message: "Profile updated successfully." };
+  } catch (e: any) {
+    console.error("Error updating profile:", e);
+    return { message: `Error updating profile: ${e.message}` };
+  }
+}
+
+const passwordSchema = z
+  .object({
+    currentPassword: z
+      .string()
+      .min(1, { message: "Current password is required" }),
+    newPassword: z
+      .string()
+      .min(8, { message: "New password must be at least 8 characters." })
+      .regex(/[a-zA-Z]/, {
+        message: "New password must contain at least one letter.",
+      })
+      .regex(/[0-9]/, {
+        message: "New password must contain at least one number.",
+      })
+      .regex(/[^a-zA-Z0-9]/, {
+        message: "New password must contain at least one special character.",
+      }),
+    confirmPassword: z
+      .string()
+      .min(1, { message: "Confirm new password is required" }),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "New password and confirm password do not match.",
+    path: ["confirmPassword"],
+  });
+
+export async function updatePassword(
+  prevState: { message: string },
+  formData: FormData
+) {
+  const sessionCookie = cookies().get("session");
+  if (!sessionCookie) {
+    return { message: "Not authenticated" };
+  }
+
+  try {
+    const data = Object.fromEntries(formData);
+    const { currentPassword, newPassword } = passwordSchema.parse(data);
+
+    const { account } = await createSessionClient(sessionCookie.value);
+    await account.updatePassword({
+      password: newPassword,
+      oldPassword: currentPassword,
+    });
+
+    revalidatePath("/profile");
+    return { message: "Password updated successfully." };
+  } catch (e: any) {
+    console.error("Error updating password:", e);
+    if (e instanceof ZodError) {
+      return { message: e.message || "Validation error." };
+    }
+    if (e instanceof AppwriteException) {
+      if (e.code === 401) {
+        return { message: "Incorrect current password." };
+      }
+    }
+    return { message: `Error updating password: ${e.message}` };
+  }
+}
+
+/**
  * Logs the user out by deleting the session.
  */
 export async function signOut() {

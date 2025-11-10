@@ -33,7 +33,7 @@ export async function getCoreSpendData(msisdn: string) {
         queries: [Query.equal("msisdn", msisdnDoc.$id)],
       });
   
-      return { coreSpendData: coreSpendRows[0] || null };
+      return { coreSpendData: coreSpendRows || [] };
     } catch (error) {
       console.error("Error fetching core spend data:", error);
       return null;
