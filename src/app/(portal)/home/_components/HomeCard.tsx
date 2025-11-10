@@ -36,16 +36,10 @@ export default function HomeCard({ msisdn, eBucksTiers }: HomeCardProps) {
             <CardTitle className="tracking-wide">
               Your E-Bucks Balance
             </CardTitle>
-            <CardTitle className="tracking-wide">
-              Your Performance Score
-            </CardTitle>
           </div>
           <div className="flex flex-row justify-between items-center">
             <CardDescription className="text-white/80 text-sm">
               Earn more with every use of EcoCash services
-            </CardDescription>
-            <CardDescription className="text-white/80 text-sm">
-              Your score is based on your weekly transactions
             </CardDescription>
           </div>
         </CardHeader>
@@ -85,16 +79,10 @@ export default function HomeCard({ msisdn, eBucksTiers }: HomeCardProps) {
       <CardHeader>
         <div className="flex flex-row justify-between">
           <CardTitle className=" tracking-wide">Your E-Bucks Balance</CardTitle>
-          <CardTitle className=" tracking-wide">
-            Your Performance Score
-          </CardTitle>
         </div>
         <div className="flex flex-row justify-between items-center">
           <CardDescription className="text-white/80 text-sm">
             Earn more with every use of EcoCash services
-          </CardDescription>
-          <CardDescription className="text-white/80 text-sm">
-            Your score is based on your weekly transactions
           </CardDescription>
         </div>
       </CardHeader>
@@ -120,18 +108,6 @@ export default function HomeCard({ msisdn, eBucksTiers }: HomeCardProps) {
                 You are at the highest tier!
               </p>
             )}
-          </div>
-
-          <div className="flex flex-col items-end">
-            <p className="text-4xl font-bold mb-2">
-              {msisdn.current_performance_score ?? "-"}
-            </p>
-            <p className="font-bold text-sm text-white/80">
-              Rank:{" "}
-              <span className="text-amber-500">
-                {msisdn.current_performance_rank ?? "-"}
-              </span>
-            </p>
           </div>
         </div>
       </CardContent>

@@ -3,7 +3,9 @@ import {
   Ebucks_Tiers,
   Core_Spend,
   Performance_Rankings,
+  Agent_Weekly_Performance,
 } from "@/lib/definitions";
+import { WeeklyPerformance } from "./_components/WeeklyPerformance";
 import FilteredCards from "./_components/FilteredCards";
 import HomeCard from "./_components/HomeCard";
 import HomeCardSkeleton from "./_components/HomeCardSkeleton";
@@ -11,7 +13,10 @@ import CardsSkeleton from "./_components/CardsSkeleton";
 import { getAgentWithActiveMsisdn } from "@/lib/getAgent";
 import { getEbucksTiers } from "@/lib/getEbucksTiers";
 import { getCoreSpendData } from "@/lib/getCoreSpend";
-import { getPerformanceData } from "@/lib/getPerformance";
+import {
+  getAgentWeeklyPerformanceData,
+  getPerformanceData,
+} from "@/lib/getPerformance";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
@@ -26,10 +31,16 @@ export default async function Page() {
   const { agent, activeMsisdn } = data;
 
   // Fetch all page data in parallel for better performance
-  const [ebucksTiersData, coreSpendData, performanceData] = await Promise.all([
+  const [
+    ebucksTiersData,
+    coreSpendData,
+    performanceData,
+    agentWeeklyPerformanceData,
+  ] = await Promise.all([
     getEbucksTiers(),
     getCoreSpendData(activeMsisdn!),
     getPerformanceData(activeMsisdn!),
+    getAgentWeeklyPerformanceData(activeMsisdn!),
   ]);
 
   const ebucksTiers: Ebucks_Tiers[] =
@@ -62,13 +73,9 @@ export default async function Page() {
             />
           </Suspense>
 
-          <Suspense fallback={<CardsSkeleton />}>
-            <FilteredCards
-              initialCoreSpend={allCoreSpend}
-              initialPerformance={allPerformance}
-            />
-          </Suspense>
-        </div>
+                    <Suspense fallback={<CardsSkeleton />}>
+                      <WeeklyPerformance weeklyPerformanceData={agentWeeklyPerformanceData} />
+                    </Suspense>        </div>
       </div>
     </div>
   );

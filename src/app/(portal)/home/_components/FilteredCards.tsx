@@ -54,7 +54,7 @@ export default function FilteredCards({
   };
 
   const filteredCoreSpend = useMemo(() => {
-    if (!initialCoreSpend) return null;
+    if (!initialCoreSpend || !Array.isArray(initialCoreSpend)) return null;
 
     const today = new Date();
     let targetDateStr: string;
