@@ -26,8 +26,7 @@ export default async function Page() {
   // Fetch all page data in parallel for better performance
   const [ebucksTiersData, agentWeeklyPerformanceData] = await Promise.all([
     getEbucksTiers(),
-    getCoreSpendData(activeMsisdn!),
-    getPerformanceData(activeMsisdn!),
+
     getAgentWeeklyPerformanceData(activeMsisdn!),
   ]);
 
@@ -61,7 +60,7 @@ export default async function Page() {
           </Suspense>
           <Suspense fallback={<CardsSkeleton />}>
             <WeeklyPerformance
-              weeklyPerformanceData={agentWeeklyPerformanceData}
+              weeklyPerformanceData={agentWeeklyPerformanceData || null}
             />
           </Suspense>{" "}
         </div>
