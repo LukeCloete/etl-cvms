@@ -7,8 +7,8 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "EcoCash Agent Rewards",
-  description: "Earn rewards and view your performance as an EcoCash agent.",
+  title: "EcoCash Agent Loyalty Portal",
+  description: "Track your performance metrics and targets with ease.",
 };
 
 export default function RootLayout({
