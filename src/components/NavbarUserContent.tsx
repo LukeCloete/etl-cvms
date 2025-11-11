@@ -60,7 +60,7 @@ export default function NavbarUserContent({
 
   return (
     <div className="flex items-center justify-center gap-2">
-      <DropdownMenu>
+      <DropdownMenu modal={false}>
         <DropdownMenuTrigger>
           <div className="flex items-center justify-center gap-2 p-2">
             <Bell width={18} height={18} />
@@ -103,7 +103,7 @@ export default function NavbarUserContent({
           </SelectContent>
         </Select>
       </div>
-      <DropdownMenu>
+      <DropdownMenu modal={false}>
         <DropdownMenuTrigger>
           <div className="flex items-center justify-center rounded-full bg-econetBlue text-econetWhite w-8 h-8">
             <p>{agent.name.split("")[0]}</p>

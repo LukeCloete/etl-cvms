@@ -8,7 +8,7 @@ export async function middleware(request: NextRequest) {
     const response = NextResponse.redirect(new URL("/log-in", request.url));
     return response;
   }
-  console.log("middleware ran");
+
   return NextResponse.next();
 }
 

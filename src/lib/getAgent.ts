@@ -49,6 +49,8 @@ export async function getCurrentAgent(): Promise<Agents | null> {
     return {
       $id: agent.$id,
       name: agent.name,
+      email: user.email,
+      phone: user.phone,
       current_points: agent.current_points,
       current_ebucks: agent.current_ebucks,
       msisdns: msisdns ,
