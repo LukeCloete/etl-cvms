@@ -4,10 +4,15 @@ import TranTable from "./_components/TranTable";
 import { Ebucks_log, Msisdns, Performance_Rankings } from "@/lib/definitions";
 import { getAgentWithActiveMsisdn } from "@/lib/getAgent";
 import { redirect } from "next/navigation";
-import { getPerformanceData } from "@/lib/getPerformance";
 import { getEbucksLogData } from "@/lib/getEbucksLog";
 import { Suspense } from "react";
 import HistoryCardSkeleton from "./_components/HistoryCardSkeleton";
+import { columns } from "./_definitions/columns";
+import { getEbucksTiers } from "@/lib/getEbucksTiers";
+import {
+  getAgentWeeklyPerformanceData,
+  getPerformanceData,
+} from "@/lib/getPerformance";
 
 export default async function page() {
   // Get agent and active MSISDN from cookies
@@ -22,6 +27,12 @@ export default async function page() {
   const [performanceData, ebucksData] = await Promise.all([
     getPerformanceData(activeMsisdn),
     getEbucksLogData(activeMsisdn),
+  ]);
+
+  // Fetch all page data in parallel for better performance
+  const [ebucksTiersData, agentWeeklyPerformanceData] = await Promise.all([
+    getEbucksTiers(),
+    getAgentWeeklyPerformanceData(activeMsisdn!),
   ]);
 
   const performance: Performance_Rankings[] =
@@ -95,10 +106,13 @@ export default async function page() {
             </Suspense>
           </div>
           {/* Recent Transactions */}
-          <TranTable
+          {/* <TranTable
             performanceData={{ performanceData: performance }}
             ebucksData={{ ebucksData: eBucks }}
-          />
+          /> */}
+          <div className="ml-4 mr-4 w-full mt-16">
+            <TranTable columns={columns} data={agentWeeklyPerformanceData} />
+          </div>
         </div>
       </div>
     </div>
