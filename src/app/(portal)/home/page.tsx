@@ -5,11 +5,7 @@ import HomeCardSkeleton from "./_components/HomeCardSkeleton";
 import CardsSkeleton from "./_components/CardsSkeleton";
 import { getAgentWithActiveMsisdn } from "@/lib/getAgent";
 import { getEbucksTiers } from "@/lib/getEbucksTiers";
-import { getCoreSpendData } from "@/lib/getCoreSpend";
-import {
-  getAgentWeeklyPerformanceData,
-  getPerformanceData,
-} from "@/lib/getPerformance";
+import { getAgentWeeklyPerformanceData } from "@/lib/getPerformance";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 

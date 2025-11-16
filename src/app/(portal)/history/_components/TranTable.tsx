@@ -56,13 +56,10 @@ export default function TranTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filteredData, setFilteredData] = useState<
-    (Performance_Rankings | Ebucks_log)[]
-  >([]);
   const [activeFilter, setActiveFilter] = useState("all"); // 'all' or 'cashin'
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [globalFilter, setGlobalFilter] = useState("");
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
 
@@ -98,17 +95,74 @@ export default function TranTable<TData, TValue>({
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
+    onGlobalFilterChange: setGlobalFilter,
+    globalFilterFn: (row, columnId, filterValue) => {
+      const lowercasedFilter = filterValue.toLowerCase();
+      const normalizedFilter = lowercasedFilter.replace(/[\s-]/g, "");
+
+      // If the normalized search is 'cashin' or 'cashout', only check against transaction type
+      if (normalizedFilter === "cashin" || normalizedFilter === "cashout") {
+        const transactionType = (
+          row.getValue("transaction_type") as string
+        ).toLowerCase();
+        return transactionType === normalizedFilter;
+      }
+
+      // For all other searches, check against all relevant columns
+      const dateValue = row.getValue("week_end_date");
+      const formattedDate = new Date(dateValue as string)
+        .toLocaleDateString("en-GB", {
+          year: "numeric",
+          month: "short",
+          day: "2-digit",
+        })
+        .toLowerCase();
+      const value = String(row.getValue("value")).toLowerCase();
+      const count = String(row.getValue("count")).toLowerCase();
+
+      return (
+        formattedDate.includes(lowercasedFilter) ||
+        value.includes(lowercasedFilter) ||
+        count.includes(lowercasedFilter)
+      );
+    },
     getSortedRowModel: getSortedRowModel(),
     onRowSelectionChange: setRowSelection,
     state: {
       sorting,
       columnFilters,
       columnVisibility,
+      globalFilter,
       rowSelection,
     },
   });
 
   const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
+
+  useEffect(() => {
+    const transactionTypeColumn = table.getColumn("transaction_type");
+
+    if (transactionTypeColumn) {
+      if (activeFilter === "all") {
+        transactionTypeColumn.setFilterValue(undefined); // Clear the filter
+      } else {
+        transactionTypeColumn.setFilterValue(activeFilter); // Set filter to 'cashin' or 'cashout'
+      }
+    }
+  }, [activeFilter, table]);
+
+  useEffect(() => {
+    const dateColumn = table.getColumn("week_end_date");
+    if (dateColumn) {
+      if (dateRange?.from && dateRange?.to) {
+        // Set the filter to be an array [startDate, endDate]
+        dateColumn.setFilterValue([dateRange.from, dateRange.to]);
+      } else {
+        // Clear the filter if no date range is selected
+        dateColumn.setFilterValue(undefined);
+      }
+    }
+  }, [dateRange, table]);
 
   // console.log(data);
   return (
@@ -131,16 +185,12 @@ export default function TranTable<TData, TValue>({
               Search
             </Label>
             <Input
-              placeholder="Search Transactions..."
-              // value={
-              //   (table.getColumn("barcode")?.getFilterValue() as string) ?? ""
-              // }
-              // onChange={(event) =>
-              //   table.getColumn("barcode")?.setFilterValue(event.target.value)
-              // }
+              placeholder="Search all columns..."
+              value={globalFilter ?? ""}
+              onChange={(event) => setGlobalFilter(event.target.value)}
               className="max-w-sm"
             />
-            <DatePickerWithRange onDateChange={setDateRange} />
+            <DatePickerWithRange date={dateRange} onDateChange={setDateRange} />
             <button
               type="button"
               onClick={(e) => {

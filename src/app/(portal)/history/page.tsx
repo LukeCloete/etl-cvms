@@ -1,18 +1,13 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { LayoutPanelLeft, TrendingUp, TrendingDown } from "lucide-react";
 import TranTable from "./_components/TranTable";
-import { Ebucks_log, Msisdns, Performance_Rankings } from "@/lib/definitions";
+import { Msisdns } from "@/lib/definitions";
 import { getAgentWithActiveMsisdn } from "@/lib/getAgent";
 import { redirect } from "next/navigation";
-import { getEbucksLogData } from "@/lib/getEbucksLog";
 import { Suspense } from "react";
 import HistoryCardSkeleton from "./_components/HistoryCardSkeleton";
 import { columns } from "./_definitions/columns";
-import { getEbucksTiers } from "@/lib/getEbucksTiers";
-import {
-  getAgentWeeklyPerformanceData,
-  getPerformanceData,
-} from "@/lib/getPerformance";
+import { getAgentWeeklyPerformanceData } from "@/lib/getPerformance";
 
 export default async function page() {
   // Get agent and active MSISDN from cookies
@@ -24,21 +19,10 @@ export default async function page() {
 
   const { agent, activeMsisdn } = data;
 
-  const [performanceData, ebucksData] = await Promise.all([
-    getPerformanceData(activeMsisdn),
-    getEbucksLogData(activeMsisdn),
-  ]);
-
   // Fetch all page data in parallel for better performance
-  const [ebucksTiersData, agentWeeklyPerformanceData] = await Promise.all([
-    getEbucksTiers(),
+  const [agentWeeklyPerformanceData] = await Promise.all([
     getAgentWeeklyPerformanceData(activeMsisdn!),
   ]);
-
-  const performance: Performance_Rankings[] =
-    performanceData?.performanceData as unknown as Performance_Rankings[];
-
-  const eBucks = ebucksData?.ebucksData as unknown as Ebucks_log[];
 
   // Find the active MSISDN object
   const activeMsisdnObj: Msisdns | undefined = agent.msisdns.find(
@@ -111,7 +95,10 @@ export default async function page() {
             ebucksData={{ ebucksData: eBucks }}
           /> */}
           <div className="ml-4 mr-4 w-full mt-16">
-            <TranTable columns={columns} data={agentWeeklyPerformanceData} />
+            <TranTable
+              columns={columns}
+              data={agentWeeklyPerformanceData ?? []}
+            />
           </div>
         </div>
       </div>

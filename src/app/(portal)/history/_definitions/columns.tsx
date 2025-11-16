@@ -1,35 +1,22 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+import { ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
-export type Item = {
-  // Assuming these properties exist on your data object
-  week_end_date: string;
-  transaction_type: "cashin" | "cashout";
-  week_total_cashin_value: number;
-  week_total_cashout_value: number;
-  week_total_cashin_count: number;
-  week_total_cashout_count: number;
-  $createdAt: string;
-};
 
-export const columns: ColumnDef<Item>[] = [
+export const columns: ColumnDef<any>[] = [
   {
     accessorKey: "transaction_type",
     header: "Type",
     cell: ({ row }) => {
       const type = row.original.transaction_type;
       const isCashIn = type === "cashin";
-      const color = isCashIn ? "text-green-500" : "text-red-500";
       const text = isCashIn ? "Cash In" : "Cash Out";
-      return <div className={color}>{text}</div>;
+      return <div>{text}</div>;
     },
   },
   {
     // A composite accessorKey isn't needed if we use a custom cell renderer
-    accessorKey: "value",
+    id: "value",
     header: ({ column }) => {
       return (
         <Button
@@ -41,6 +28,10 @@ export const columns: ColumnDef<Item>[] = [
         </Button>
       );
     },
+    accessorFn: (row) =>
+      row.transaction_type === "cashin"
+        ? row.week_total_cashin_value
+        : row.week_total_cashout_value,
     cell: ({ row }) => {
       const isCashIn = row.original.transaction_type === "cashin";
       const value = isCashIn
@@ -51,7 +42,8 @@ export const columns: ColumnDef<Item>[] = [
     },
   },
   {
-    accessorKey: "count",
+    id: "count",
+    sortingFn: "alphanumeric",
     header: ({ column }) => {
       return (
         <Button
@@ -63,6 +55,10 @@ export const columns: ColumnDef<Item>[] = [
         </Button>
       );
     },
+    accessorFn: (row) =>
+      row.transaction_type === "cashin"
+        ? row.week_total_cashin_count
+        : row.week_total_cashout_count,
     cell: ({ row }) => {
       const isCashIn = row.original.transaction_type === "cashin";
       const count = isCashIn
@@ -73,7 +69,7 @@ export const columns: ColumnDef<Item>[] = [
     },
   },
   {
-    accessorKey: "$createdAt",
+    accessorKey: "week_end_date", // This is the column we are filtering
     header: ({ column }) => {
       return (
         <Button
@@ -84,6 +80,16 @@ export const columns: ColumnDef<Item>[] = [
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
+    },
+    filterFn: (row, columnId, filterValue) => {
+      const date = new Date(row.getValue(columnId));
+      const [start, end] = filterValue as Date[];
+
+      // Adjust the end date to include the entire day
+      const adjustedEnd = new Date(end);
+      adjustedEnd.setHours(23, 59, 59, 999);
+
+      return date >= start && date <= adjustedEnd;
     },
     cell: ({ row }) => {
       // Use week_end_date and format it
