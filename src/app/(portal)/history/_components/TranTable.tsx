@@ -16,7 +16,6 @@ import {
   flexRender,
   VisibilityState,
   getCoreRowModel,
-  getPaginationRowModel,
   getFilteredRowModel,
   getSortedRowModel,
   useReactTable,
@@ -30,22 +29,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { DatePickerWithRange } from "@/components/ui/date-picker";
-import { Funnel, CardSim, PhoneCall, Mail } from "lucide-react";
-import { BanknoteArrowUp } from "lucide-react";
-import { BanknoteArrowDown } from "lucide-react";
+import { Funnel } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { Performance_Rankings, Ebucks_log } from "@/lib/definitions";
 import { DateRange } from "react-day-picker";
 import { Input } from "@/components/ui/input";
-
-type TranTableProps = {
-  performanceData: {
-    performanceData: Performance_Rankings[];
-  };
-  ebucksData: {
-    ebucksData: Ebucks_log[];
-  };
-};
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
