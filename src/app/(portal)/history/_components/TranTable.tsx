@@ -110,10 +110,18 @@ export default function TranTable<TData, TValue>({
 
       // For all other searches, check against all relevant columns
       const dateValue = row.getValue("week_end_date");
-      const formattedDate = new Date(dateValue as string)
+      const date = new Date(dateValue as string);
+      const formattedDateShort = date
         .toLocaleDateString("en-GB", {
           year: "numeric",
           month: "short",
+          day: "2-digit",
+        })
+        .toLowerCase();
+      const formattedDateLong = date
+        .toLocaleDateString("en-GB", {
+          year: "numeric",
+          month: "long",
           day: "2-digit",
         })
         .toLowerCase();
@@ -121,7 +129,8 @@ export default function TranTable<TData, TValue>({
       const count = String(row.getValue("count")).toLowerCase();
 
       return (
-        formattedDate.includes(lowercasedFilter) ||
+        formattedDateShort.includes(lowercasedFilter) ||
+        formattedDateLong.includes(lowercasedFilter) ||
         value.includes(lowercasedFilter) ||
         count.includes(lowercasedFilter)
       );
