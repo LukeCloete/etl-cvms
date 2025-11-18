@@ -20,6 +20,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { Transaction } from "../_definitions/columns";
 
 import {
   Card,
@@ -35,14 +36,22 @@ import { DateRange } from "react-day-picker";
 import { Input } from "@/components/ui/input";
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+  columns: ColumnDef<Transaction, TValue>[];
+  data: TData[]; // This will be RawTransaction[]
 }
 
-export default function TranTable<TData, TValue>({
+type RawTransaction = {
+  week_total_cashin_value: number;
+  week_total_cashout_value: number;
+  week_total_cashin_count: number;
+  week_total_cashout_count: number;
+  week_end_date: string;
+};
+
+export default function TranTable<TData extends RawTransaction, TValue>({
   columns,
   data,
-}: DataTableProps<TData, TValue>) {
+}: DataTableProps<TData, TValue>): JSX.Element {
   const [activeFilter, setActiveFilter] = useState("all"); // 'all' or 'cashin'
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -51,14 +60,21 @@ export default function TranTable<TData, TValue>({
   const [rowSelection, setRowSelection] = useState({});
 
   const processedData = useMemo(() => {
-    const result: TData[] = [];
-    data.forEach((originalRow: any) => {
+    const result: Transaction[] = [];
+    data.forEach((originalRow) => {
       // Create a record for cash-in if it exists and is not zero
       if (
         originalRow.week_total_cashin_value &&
         originalRow.week_total_cashin_value > 0
       ) {
-        result.push({ ...originalRow, transaction_type: "cashin" });
+        result.push({
+          week_total_cashin_value: originalRow.week_total_cashin_value,
+          week_total_cashout_value: originalRow.week_total_cashout_value,
+          week_total_cashin_count: originalRow.week_total_cashin_count,
+          week_total_cashout_count: originalRow.week_total_cashout_count,
+          week_end_date: originalRow.week_end_date,
+          transaction_type: "cashin",
+        });
       }
       // Create a separate record for cash-out if it exists and is not zero
       if (
@@ -66,7 +82,11 @@ export default function TranTable<TData, TValue>({
         originalRow.week_total_cashout_value > 0
       ) {
         result.push({
-          ...originalRow,
+          week_total_cashin_value: originalRow.week_total_cashin_value,
+          week_total_cashout_value: originalRow.week_total_cashout_value,
+          week_total_cashin_count: originalRow.week_total_cashin_count,
+          week_total_cashout_count: originalRow.week_total_cashout_count,
+          week_end_date: originalRow.week_end_date,
           transaction_type: "cashout",
         });
       }

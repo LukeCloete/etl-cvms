@@ -2,8 +2,15 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-export const columns: ColumnDef<any>[] = [
+export type Transaction = {
+  week_total_cashin_value: number;
+  week_total_cashout_value: number;
+  week_total_cashin_count: number;
+  week_total_cashout_count: number;
+  week_end_date: string;
+  transaction_type: "cashin" | "cashout";
+};
+export const columns: ColumnDef<Transaction>[] = [
   {
     accessorKey: "transaction_type",
     header: "Type",
